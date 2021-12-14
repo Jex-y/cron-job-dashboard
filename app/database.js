@@ -24,7 +24,7 @@ module.exports.getUser = async (email) => {
         logging.debug(`User ${email} does not exist in database`);
     }
     
-    return user;
+    return user;    
 };
 
 module.exports.addUser = async (name, email, password) => {

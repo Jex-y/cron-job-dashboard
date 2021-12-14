@@ -5,7 +5,7 @@ const symbols = {
     'warning': '[!]',
     'info': '[*]',
     'debug': '[?]'
-}
+};
 
 const levels = ['error', 'warning', 'info', 'debug'];
 
@@ -33,34 +33,34 @@ module.exports.initialize = () => {
 
     let now = new Date();
     logfile = `${logdir}/${now.getFullYear()}-${now.getMonth()}-${now.getDay()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.log`;
-}
+};
 
 
 module.exports.log = (msg, level) => {
     level = level.toLowerCase();
-    log_level = process.env.LOG_LEVEL.toLowerCase();
+    let log_level = process.env.LOG_LEVEL.toLowerCase();
     if (levels.indexOf(level) <= levels.indexOf(log_level)) {
         let symbol = symbols[level];
         let now = new Date();
         msg = `${now.toISOString()} | ${symbol} ${msg}`;
-        if (level === "error") {
+        if (level === 'error') {
             console.error(msg);
         } else {
             console.log(msg);
         }
         writeToLog(msg);
     }
-}
+};
 
 for (const level of levels) {
-    module.exports[level] = (msg) => {module.exports.log(msg, level)};
+    module.exports[level] = (msg) => {module.exports.log(msg, level);};
 }
 
 module.exports.logrequests = (err, req, res, next) => {
     console.log('Logging called');
     next();
     console.log('Logging called again');
-    msg = `${req.status}`;
+    let msg = `${req.status}`;
     // module.exports.info()
     console.log(msg);
-}
+};

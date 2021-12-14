@@ -58,7 +58,7 @@ async function writeJSON(file, data) {
 
 if (process.env.DB_MODE === 'DEBUG') {
     logging.debug('Initialising mock database');
-    this.datafile = 'data/debug.json';
+    this.datafile = 'data/testdb.json';
     this.clear();
 } else {
     this.datafile = process.env.DB_DATAFILE;

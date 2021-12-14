@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "pretest": "npx eslint ./app/*.js ./routes/*.js",
-    "start": "node ./src/server.js --node-env=test",
+    "start": "node ./app/server.js --node-env=test",
     "test": "cross-env NODE_ENV=test jest"
   },
   "jest": {

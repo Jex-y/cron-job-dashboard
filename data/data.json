@@ -4,7 +4,26 @@
         {
             "name":"test",
             "email":"test@email.com",
-            "pass":"$2b$10$m6Xts6GYlFtvnc542sc.bewvq/LNna9ZHDg2HSCy.JvVzD46E107G"
+            "pass":"$2b$10$m6Xts6GYlFtvnc542sc.bewvq/LNna9ZHDg2HSCy.JvVzD46E107G",
+            "id":"b840189f-d5a3-4439-9609-6590a3c3fe23"
+        }
+    ],
+    "jobs":
+    [
+        {
+            "name":"test",
+            "description":"test job",
+            "user":"b840189f-d5a3-4439-9609-6590a3c3fe23"
+        }
+    ],
+    "runs":
+    [
+        {
+            "user":"b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name":"test",
+            "start":"2021-12-14T23:45:14.460Z",
+            "finish":"2021-12-14T23:46:45.460Z",
+            "status":"success"
         }
     ]
 }

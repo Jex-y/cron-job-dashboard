@@ -17,8 +17,7 @@ module.exports = (db) => {
             return res.status(400).send({
                 error:'Data sent does not contain a username and password'});
         }
-    
-        let user = await db.getUser(email);
+        let user = await db.getUserByEmail(email);
         if (user) {
             const validPass = bcrypt.compareSync(pass, user.pass);
             if (validPass) {
@@ -55,7 +54,7 @@ module.exports = (db) => {
             });
         }
 
-        let user = await db.getUser(email);
+        let user = await db.getUserByEmail(email);
         if (user) {
             return res.status(400).send({
                 error:'There is already a user registered with that email'

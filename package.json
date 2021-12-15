@@ -10,6 +10,8 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageProvider": "v8",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
@@ -26,8 +28,10 @@
     "express": "^4.17.1",
     "jest": "^27.4.3",
     "jsonwebtoken": "^8.5.1",
+    "locker": "^0.1.0",
     "mongoose": "^6.0.13",
     "supertest": "^6.1.6",
+    "uuid": "^8.3.2",
     "yargs": "^17.3.0"
   },
   "devDependencies": {

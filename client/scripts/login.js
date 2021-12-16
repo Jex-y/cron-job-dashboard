@@ -12,42 +12,42 @@ loginForm.addEventListener('submit', async (event) => {
 
     let valid = validateForm();
     if (valid) {
-        var myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
-
-        var urlencoded = new URLSearchParams();
-        urlencoded.append('email', 'edwardjex@live.co.uk');
-        urlencoded.append('pass', 'password');
-
-        var requestOptions = {
+        let res = await fetch('/auth', {
             method: 'POST',
-            headers: myHeaders,
-            body: urlencoded,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }),
+            body: new URLSearchParams({
+                email: loginForm.email.value,
+                pass: loginForm.pass.value
+            }),
             redirect: 'follow'
-        };
+        }).catch(error => console.log('error', error));
 
-        let response = await fetch('/auth', requestOptions)
-            .then(async res => JSON.parse(await res.text()))
-            .catch(error => console.log('error', error));
-
-        if (!response.ok) {
+        let ok = res.ok;
+        res = JSON.parse(await res.text());
+        // Error if could not connect to server
+        // Also button to show password
+        console.log(ok);
+        if (!ok) {
             let submitError = document.getElementById('submit-error');
-            
+
             if (submitError) {
-                submitError.innerHTML = response.error;   
+                submitError.innerHTML = res.error;
             }
             else {
                 submitError = document.createElement('div');
                 document.getElementById('form-grid').appendChild(submitError);
-                submitError.outerHTML = 
-                    '<div class="row text-center mb-0">'+
-                        `<h6 class="text-danger mt-3 mb-0" id="submit-error">${response.error}</h6>`+
+                submitError.outerHTML =
+                    '<div class="row text-center mb-0">' +
+                    `<h6 class="text-danger mt-3 mb-0" id="submit-error">${res.error}</h6>` +
                     '</div>';
-            } 
-         
-        }
+            }
 
-        // TODO: add token to cookie
+        } else {
+            document.cookie = res.token;
+            window.location.href = '/app';
+        }
     }
 });
 
@@ -67,10 +67,6 @@ function validateForm() {
     if (pass == '') {
         valid = false;
         document.getElementById('pass-invalid').innerHTML = 'Password cannot be empty';
-        loginForm.pass.setCustomValidity('_');
-    } else if (pass.length < 8) {
-        valid = false;
-        document.getElementById('pass-invalid').innerHTML = 'Password length must be at least 8 characters.';
         loginForm.pass.setCustomValidity('_');
     } else {
         loginForm.pass.setCustomValidity('');

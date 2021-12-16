@@ -19,29 +19,28 @@
     <div class="container">
         <div class="col">
             <div class="row">
-                <form class="border border-3 rounded login-form shadow-lg" id="login-form" novalidate>
-                    <div class="col mb-1" id="form-grid">
-                        <div class="row mb-3 text-center">
-                            <h3>Login</h3>
+                <form class="border border-3 rounded login-form shadow-lg" novalidate id="loginForm">
+                    <div class="col mb-3">
+                        <div class="row text-center mb-3">
+                            <h3>Register</h3>
                         </div>
                         <div class="row mb-3">
                             <label for="emailInput" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" placeholder="email@address.com" autofocus
-                                required />
-                            <div class="invalid-feedback" id='email-invalid'></div>
+                            <input type="email" class="form-control" id="email" placeholder="email@address.com"
+                                autofocus required />
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <label for="passwordInput" class="form-label">Password</label>
                             <input type="password" class="form-control" id="pass" placeholder="Enter your password" required />
-                            <div class="invalid-feedback" id='pass-invalid'></div>
-                            <!-- Why does this make extra padding? -->
                         </div>
-                        <div class="row mx-3">
+                        <div class="row mx-3 mb-3">
                             <label for="submit" class="form-submit visually-hidden">Submit</label>
                             <button type="submit" class="btn btn-primary">Log in</button>
                         </div>
                     </div>
-                    <!-- Should also do csrf token -->
             </div>
             <div class="row m-3 text-center text-light">
                 <h5>
@@ -55,8 +54,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-
-    <script src="./scripts/login.js"></script>
 </body>
 
 </html>

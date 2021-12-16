@@ -32,12 +32,10 @@ module.exports = (db) => {
                     token:token
                 });
 
-            } else {
-                return res.status(403).send({msg:'Password Incorrect'});
             }
-        } else {
-            return res.status(401).send({msg:'User does not exist'});
         }
+        // Do not want to give away which one is incorrect as that means that someone can check if an account exists.
+        return res.status(403).send({error:'Email or password incorrect'});
     });
     
     router.post('/register', async (req, res) => {

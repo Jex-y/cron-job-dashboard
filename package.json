@@ -14,7 +14,8 @@
     "coverageProvider": "v8",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "logging.js"
+      "logging.js",
+      "database.js"
     ]
   },
   "author": "",

@@ -146,9 +146,17 @@ describe('GET /:jobName', () => {
             expect(res.body.stdevDuration).toBeGreaterThanOrEqual(min);
             expect(res.body.stdevDuration).toBeLessThanOrEqual(max);
         });
+});
+
+describe('API authentication', () => {
+    const db = new Database('data/api_test_db2.json');
+    const app = require('../app/app')(db);
+    const server = supertest(app);
+    let userID = null;
+    let token = null;
 
     it(
-        'Any call to the api without valid credentials should result in an error', async () => {
+        'Any call to the api with a token with an invalid userID should return an error', async () => {
             const jobName = 'testjob';
             let invaliduserID = uuid.v4();
 
@@ -158,26 +166,51 @@ describe('GET /:jobName', () => {
                 { 'expiresIn': process.env.AUTH_TOKENLIFE }
             );
 
+            const res = await server.get(`/api/${jobName}`)
+                .set('authorization', 'Bearer ' + invaliduserIDToken);
+
+            expect(res.status).toEqual(403);
+
+            
+        });
+
+    it(
+        'Any call with a token that does not have a valid signature should return an error', async () => {
+            const jobName = 'testjob';
+
             let invaldToken = jwt.sign(
                 { user: userID },
                 'NOT THE SECRET',
                 { 'expiresIn': process.env.AUTH_TOKENLIFE }
             );
 
-            const resInvalidUserID = await server.get(`/api/${jobName}`)
-                .set('authorization', 'Bearer ' + invaliduserIDToken);
-
-            expect(resInvalidUserID.status).toEqual(403);
-
-            const resInvalidToken = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/${jobName}`)
                 .set('authorization', 'Bearer ' + invaldToken);
 
-            expect(resInvalidToken.status).toEqual(403);
+            expect(res.status).toEqual(403);
+        });
+
+    it(
+        'Any call with a token that is expired should return an error', async () => {
+            const jobName = 'testjob';
+
+            let expiredToken = jwt.sign(
+                { user: userID },
+                process.env.SECRET,
+                { 'expiresIn': '1ms' }
+            );
+            
+            await sleep(10);
+
+            const res = await server.get(`/api/${jobName}`)
+                .set('authorization', 'Bearer ' + expiredToken);
+
+            expect(res.status).toEqual(403);
         });
 });
 
 describe('POST /:jobName', () => {
-    const db = new Database('data/api_test_db2.json');
+    const db = new Database('data/api_test_db3.json');
     const app = require('../app/app')(db);
     const server = supertest(app);
     let userID = null;

@@ -114,4 +114,35 @@ describe('POST /auth/register', () => {
             expect(res.body.token).toBeUndefined();
         });
 
+    it(
+        'Registering with any empty credentials should return an error', async () => {
+            let name = 'testUser';
+            let email = 'test@email.com';
+            let pass = 'password';
+
+            for (let i = 0; i < 7; i++) {
+                let text = '';
+                if (i & 1) {
+                    text += `name=${name}`;
+                }
+                if ((i >> 1) & 1) {
+                    if (text) {
+                        text += '&';
+                    }
+                    text += `email=${email}`;
+                }
+                if ((i >> 2) & 1) {
+                    if (text) {
+                        text += '&';
+                    }
+                    text += `pass=${pass}`;
+                }
+                const res = await server.post('/auth/register')
+                    .send(text);
+                expect(res.status).toEqual(400);
+                expect(res.body.token).toBeUndefined();
+                expect(res.body.error).toEqual('Request sent does not contain a name, email and password');
+            }
+        });
+
 });

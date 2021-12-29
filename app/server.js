@@ -2,7 +2,8 @@ const http = require('http');
 require('dotenv-flow').config();
 
 const logging = require('./logging');
-const db = require('./database');
+const Database = require('../app/database');
+const db = new Database(process.env.DB_DATAFILE);
 const app = require('./app')(db);
 
 const server = http.createServer(app);

@@ -1,114 +1,187 @@
 const fs = require('fs');
 const uuid = require('uuid');
-const logging = require('./logging');
-let fileLock = false;
-let datafile = null;
 
-module.exports.getUserByEmail = async (email) => 
-    await getFromTable('users', (item) => item.email == email);
+module.exports = class Database {
+    constructor(datafile) {
+        this.datafile = datafile;
+        this.fileLock = false;
+    }
 
-module.exports.getUserByID = async (id) => 
-    await getFromTable('users', (item) => item.id == id);
+    async getUserByEmail(email) {
+        return await this.getFromTable('users', (item) => item.email == email);
+    }
 
-module.exports.addUser = async (name, email, password) => await addRecord('users', 
-    {
-        'name':name,
-        'email':email,
-        'pass':await password,
-        'id':uuid.v4()
-    });
+    async getUserByID(id) {
+        return await this.getFromTable('users', (item) => item.id == id);
+    }
 
-module.exports.getJobsByUser = async (userID) => 
-    getFromTable('jobs', (item) => item.userID == userID);
-
-module.exports.getUserJob = async (userID, jobName) => 
-    getFromTable('jobs', (item) => (item.userID == userID) && (item.jobName == jobName));
-
-module.exports.addJob = async (name, userID) => 
-    addRecord('jobs', 
-        {
-            name: name, 
-            description:'',
-            user: userID
+    async addUser(name, email, password) {
+        let id = uuid.v4();
+        await this.addRecord('users', {
+            name: name,
+            email: email,
+            pass: await password,
+            id: id,
         });
+        return id;
+    }
 
-module.exports.addRun = async (name, userID, start, finish, status) => 
-    addRecord('runs', {
-        user: userID,
-        name:name,
-        start:start,
-        finish:finish,
-        status:status
-    });
-    
-module.exports.clear = async () =>
-    writeJSON(datafile, {
-        'users':[]
-    });
+    async getJobsByUser(userID) {
+        return await this.getFromTable('jobs', (item) => item.user == userID, true);
+    }
 
-async function getFromTable(table, check) {
-    while (fileLock) { 'pass'; }
-    fileLock = true;
-    let data = (await readJSON(datafile))[table];
-    fileLock = false;
-    let result = null;
-    if (data) {
-        for (let item of data) {
-            if (check(item)) {
-                result = item;
-                break;
+    async getUserJob(userID, jobName) {
+        return await this.getFromTable(
+            'jobs',
+            (item) => item.user == userID && item.name == jobName
+        );
+    }
+
+    async addJob(userID, jobName) {
+        return await this.addRecord('jobs', {
+            user: userID,
+            name: jobName,
+        });
+    }
+
+    async startRun(userID, jobName) {
+        let start = (new Date()).toISOString();
+        await this.addRecord('runs', {
+            user: userID,
+            name: jobName,
+            start: start,
+            finish: null,
+            status: 'running',
+        });
+        return start;
+    }
+
+    async endRun(userID, jobName, start) {
+        return await this.updateFields(
+            'runs',
+            (item) => item.user == userID && item.name == jobName && item.start == start,
+            {
+                finish: (new Date()).toISOString(),
+                status: 'finished'
+            });
+    }
+
+    async failRun(userID, jobName, start) {
+        return await this.updateFields(
+            'runs',
+            (item) => item.user == userID && item.name == jobName && item.start == start,
+            {
+                finish: (new Date()).toISOString(),
+                status: 'failed'
+            });
+    }
+
+    async getRuns(userID, jobName) {
+        return await this.getFromTable(
+            'runs',
+            (item) => item.user == userID && item.name == jobName,
+            true
+        );
+    }
+
+    async getLastRun(userID, jobName) {
+        let runs = await this.getRuns(userID, jobName);
+        let latest = runs[0];
+        for (let i = 1; i < runs.length; i++) {
+            if (runs[i].start > latest.start) {
+                latest = runs[i];
             }
         }
+        return latest;
     }
-    return result;   
-}
 
-async function updateField(table, check, field, newValue) {
-    while (fileLock) { 'pass'; }
-    fileLock = true;
-    let data = await readJSON(datafile);
-    let found = false;
-    let index = 0;
-    if (data) {
-        for (let item of data[table]) {
-            if (check(item)) {
-                found = true;
-                break;
-            }
-            index ++;
+    async clear() {
+        return await writeJSON(this.datafile, {
+            users: [],
+            jobs: [],
+            runs: []
+        });
+    }
+
+    async detele() {
+        console.log('delete called');
+        await this.getFileLock();
+        fs.rmSync(this.datafile);
+    }
+
+    async getFileLock() {
+        let start = Date.now();
+        while (this.fileLock && Date.now() - start < process.env.DB_TIMEOUT) {
+            'pass';
+        }
+        if (this.fileLock) {
+            throw {
+                name: 'DBTimeoutError',
+                message: 'Database waited too long for file lock.',
+            };
         }
     }
-    if (found) {
-        data[table][index][field] = newValue;    
-    }
-    fileLock = false;
-    writeJSON(datafile, data);
-    return found;
-}
 
-async function addRecord(table, item) {
-    while (fileLock) { 'pass'; }
-    fileLock = true;
-    let data = await readJSON(datafile);
-    data[table].push(item);
-    await writeJSON(datafile, data);
-    fileLock = false;
-}
+    async getFromTable(table, check, multiple = false) {
+        await this.getFileLock();
+        this.fileLock = true;
+        let data = (await readJSON(this.datafile))[table];
+        this.fileLock = false;
+        let result = multiple ? [] : null;
+        if (data) {
+            for (let item of data) {
+                if (check(item)) {
+                    if (multiple) {
+                        result.push(item);
+                    } else {
+                        result = item;
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    async updateFields(table, check, values, multiple = false) {
+        await this.getFileLock();
+        this.fileLock = true;
+        let data = await readJSON(this.datafile);
+        // Error here somewhere when finishing job.
+        if (data) {
+            for (let i = 0; i < data[table].length; i++) {
+                if (check(data[table][i])) {
+                    for (let field in values) {
+                        data[table][i][field] = values[field];
+                    }
+                    if (!multiple) { break; }
+                }
+            }
+        }
+        this.fileLock = false;
+        writeJSON(this.datafile, data);
+    }
+
+    async addRecord(table, item) {
+        await this.getFileLock();
+        this.fileLock = true;
+        let data = await readJSON(this.datafile);
+        if (!data[table]) {
+            data[table] = [];
+        }
+        data[table].push(item);
+        await writeJSON(this.datafile, data);
+        this.fileLock = false;
+    }
+};
 
 async function readJSON(file) {
     let data = fs.readFileSync(file);
-    return JSON.parse(data);
+    data = JSON.parse(data);
+    return data;
 }
 
 async function writeJSON(file, data) {
     data = JSON.stringify(data);
     fs.writeFileSync(file, data);
-}
-
-if (process.env.DB_MODE === 'DEBUG') {
-    logging.debug('Initialising mock database');
-    datafile = 'data/testdb.json';
-    this.clear();
-} else {
-    datafile = process.env.DB_DATAFILE;
 }

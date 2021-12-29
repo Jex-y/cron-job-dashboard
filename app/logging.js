@@ -42,12 +42,8 @@ module.exports.log = (msg, level) => {
     if (levels.indexOf(level) <= levels.indexOf(log_level)) {
         let symbol = symbols[level];
         let now = new Date();
-        msg = `${now.toISOString()} | ${symbol} ${msg}`;
-        if (level === 'error') {
-            console.error(msg);
-        } else {
-            console.log(msg);
-        }
+        msg = `${now.toISOString()} | ${symbol} ${toString(msg)}`;
+        console.log(msg);
         writeToLog(msg);
     }
 };

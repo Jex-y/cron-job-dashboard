@@ -1,5 +1,6 @@
 # Test db
-testdb.json
+data/*.json
+!data/data.json
 
 # Logs
 logs

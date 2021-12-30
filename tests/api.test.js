@@ -207,6 +207,13 @@ describe('API authentication', () => {
 
             expect(res.status).toEqual(403);
         });
+
+    it(
+        'Any call with no token should return an error', async () => {
+            const jobName = 'testjob';
+            const res = await server.get(`/api/${jobName}`);
+            expect(res.status).toEqual(403);
+        });
 });
 
 describe('POST /:jobName', () => {
@@ -501,7 +508,6 @@ describe('GET /jobs', () => {
             const res = await server.get('/api/jobs')
                 .set('authorization', 'Bearer ' + token);    
             
-            console.log(res.body);
             expect(res.status).toEqual(200);
             expect(res.body).toMatchObject({
                 jobs: jobNames

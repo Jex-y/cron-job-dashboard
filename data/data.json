@@ -18,8 +18,8 @@
             "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
             "name": "testjob",
             "start": "2021-12-21T16:18:12.052Z",
-            "finish": null,
-            "status": "running"
+            "finish": "2021-12-21T16:19:12.052Z",
+            "status": "finished"
         }
     ]
 }

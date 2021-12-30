@@ -104,7 +104,6 @@ module.exports = class Database {
     }
 
     async detele() {
-        console.log('delete called');
         await this.getFileLock();
         fs.rmSync(this.datafile);
     }

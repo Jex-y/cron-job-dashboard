@@ -14,7 +14,7 @@ const validateEmail = (email) =>
 module.exports.router = (db) => {
     let router = express.Router();
 
-    router.post('/', async (req, res) => {
+    router.post('/login', async (req, res) => {
         const { email, pass } = req.body;
         if (!(email && pass)) {
             return res.status(400).send({
@@ -84,9 +84,14 @@ module.exports.router = (db) => {
 module.exports.middleware = (db, redirect = true) => {
     return async (req, res, next) => {
         let { authorization } = req.headers;
-        authorization = authorization.includes('Bearer') ? authorization.split(' ')[1] : authorization;
+        if (!authorization) {
+            authorization = req.cookies.authorization;
+        }
         let decoded = undefined;
         if (authorization) {
+            if (authorization.includes('Bearer')) {
+                authorization = authorization.split(' ')[1];
+            }
             try {
                 decoded = jwt.verify(authorization, process.env.SECRET);
             }
@@ -100,7 +105,7 @@ module.exports.middleware = (db, redirect = true) => {
         }
         if (!decoded) {
             if (redirect) {
-                return res.redirect(403, '/auth/');
+                return res.redirect(302, '/login');
             } else {
                 return res.status(403).send({error: 'Invalid token'});
             }

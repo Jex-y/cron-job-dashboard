@@ -5,7 +5,6 @@ module.exports = (db) => {
     let router = express.Router();
 
     router.get('/jobs', async (req, res) => {
-        console.log('called');
         const { userID } = res.locals;
 
         const jobs = db.getJobsByUser(userID)
@@ -60,7 +59,7 @@ module.exports = (db) => {
 
             let mean = math.mean(runTimes);
             let stdev = math.std(runTimes);
-            let lastRunDuration = (Date.parse(lastRun.finish) - Date.parse(lastRun.start)) / 1000;
+            let lastRunDuration = lastRun.status == 'running' ? null : (Date.parse(lastRun.finish) - Date.parse(lastRun.start)) / 1000;
 
             let meanExOutliers;
             let lastTooSlow = false;

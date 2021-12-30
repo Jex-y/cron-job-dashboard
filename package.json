@@ -4,13 +4,14 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node ./app/server.js",
     "pretest": "npx eslint ./app/*.js ./routes/*.js",
-    "start": "node ./app/server.js --node-env=test",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "coverage": "cross-env NODE_ENV=test jest --coverage=true"
   },
   "jest": {
     "testEnvironment": "node",
-    "collectCoverage": true,
+    "collectCoverage": false,
     "coverageProvider": "v8",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
@@ -23,6 +24,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "dotenv-flow": "^3.2.0",

@@ -12,7 +12,7 @@ loginForm.addEventListener('submit', async (event) => {
 
     let valid = validateForm();
     if (valid) {
-        let res = await fetch('/auth', {
+        let res = await fetch('/login', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -21,9 +21,7 @@ loginForm.addEventListener('submit', async (event) => {
                 email: loginForm.email.value,
                 pass: loginForm.pass.value
             }),
-            redirect: 'follow'
         }).catch(error => console.log('error', error));
-
         let ok = res.ok;
         res = JSON.parse(await res.text());
         // Error if could not connect to server
@@ -45,7 +43,7 @@ loginForm.addEventListener('submit', async (event) => {
             }
 
         } else {
-            document.cookie = res.token;
+            document.cookie = `authorization=Bearer ${res.token};`;
             window.location.href = '/app';
         }
     }

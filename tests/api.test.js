@@ -109,7 +109,6 @@ describe('GET /:jobName', () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
             let start;
-
             for (let i of runtimes) {
                 start = await db.startRun(userID, jobName);
                 await sleep(i);
@@ -121,13 +120,13 @@ describe('GET /:jobName', () => {
                 .set('authorization', 'Bearer ' + token);
 
             expect(res.status).toEqual(200);
-
             expect(res.body).toMatchObject({
                 lastRunDate: start,
                 lastRunStatus: 'finished',
                 lastTooSlow: false,
                 lastTooFast: false,
-                numRuns: runtimes.length
+                numRuns: runtimes.length,
+                history: new Array(runtimes.length).fill('finished')
             });
 
             let min = mean / 1000;
@@ -140,11 +139,18 @@ describe('GET /:jobName', () => {
             expect(res.body.lastRunDuration).toBeGreaterThanOrEqual(min);
             expect(res.body.lastRunDuration).toBeLessThanOrEqual(max);
 
-            const tolerance = 0.5;
+            let tolerance = 0.5;
             min = (stdev - (tolerance * stdev)) / 1000;
             max = (stdev + (tolerance * stdev)) / 1000;
             expect(res.body.stdevDuration).toBeGreaterThanOrEqual(min);
             expect(res.body.stdevDuration).toBeLessThanOrEqual(max);
+
+            tolerance = 0.2;
+            let freq = spacing / 1000;
+            min = freq - (tolerance * freq);
+            max = freq * 3;
+            expect(res.body.frequency).toBeGreaterThanOrEqual(min);
+            expect(res.body.frequency).toBeLessThanOrEqual(max);
         });
 });
 

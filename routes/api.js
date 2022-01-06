@@ -50,6 +50,7 @@ module.exports = (db) => {
             }
 
             let allRuns = await db.getRuns(userID, jobName);
+            let history = allRuns.filter(run => run.finish).sort((run1, run2) => Date.parse(run2.start) - Date.parse(run1.start)).slice(-10).map(run => run.status);
             let runTimes = allRuns.filter(run => run.status == 'finished').map(run => (Date.parse(run.finish) - Date.parse(run.start)) / 1000);
             if (runTimes.length == 0) {
                 return res.status(400).send({
@@ -71,10 +72,31 @@ module.exports = (db) => {
                 let outlierStdevs = parseFloat(process.env.RUN_OUTLIER_STDEV);
                 let min = mean - (outlierStdevs * stdev);
                 let max = mean + (outlierStdevs * stdev);
-                let runTimeExOutliers = runTimes.filter(runtime => (min < runtime) && (runtime < max));
+                let runTimeExOutliers = runTimes.filter(runtime => (min <= runtime) && (runtime <= max));
                 meanExOutliers = math.mean(runTimeExOutliers);
                 lastTooSlow = lastRunDuration > max;
                 lastTooFast = lastRunDuration < min;
+            }
+            
+            let frequency = null;
+            if (allRuns.length >= 2) {
+                const startDates = allRuns.map(run => Date.parse(run.start));
+                startDates.sort();
+                const periods = [];
+                for (let i = 1; i < startDates.length; i ++) {
+                    periods.push((startDates[i] - startDates[i-1])/1000);
+                }
+                if (periods.length > 1) {
+                    const meanPeriod = math.mean(periods);
+                    const stdevPeriod = math.std(periods);
+                    const periodOutlierStdevs = parseFloat(process.env.PERIOD_OUTLIER_STDEV);
+                    const min = meanPeriod - (periodOutlierStdevs * stdevPeriod);
+                    const max = meanPeriod + (periodOutlierStdevs * stdevPeriod);
+                    const periodsExOutliers = periods.filter(period => (min <= period) && (period <= max));
+                    frequency = math.mean(periodsExOutliers);
+                } else{
+                    frequency = periods[0];
+                }
             }
 
 
@@ -86,7 +108,9 @@ module.exports = (db) => {
                 lastRunStatus: lastRun.status,
                 lastTooSlow: lastTooSlow,
                 lastTooFast: lastTooFast,
-                numRuns: allRuns.length
+                numRuns: allRuns.length,
+                frequency: frequency,
+                history: history
             };
 
             return res.status(200).send(info);

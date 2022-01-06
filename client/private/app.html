@@ -20,7 +20,7 @@
     <nav class="navbar sticky-top shadow-lg">
         <ul class="nav navbar-nav ms-auto justify-content-end mx-3">
             <li class="nav-item">
-                <a class="nav-link link-light" href="#">Logout</a>
+                <a class="nav-link link-light" href="#" id="logout">Logout</a>
             </li>
         </ul>
     </nav>
@@ -39,7 +39,7 @@
                     <span class="badge bg-success">Success</span>
                 </div>
             </div>
-            <div class="row details">
+            <div class="row details justify-content-center">
                 <div class="row mb-2">
                     <div class="col text-light">
                         <h6>Last run duration</h6>
@@ -58,6 +58,10 @@
                     <div class="col text-light">
                         <h6>Frequency</h6>
                         <h5 id="frequency">Every 3 days</h5>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="progress" id="history">
                     </div>
                 </div>
             </div>

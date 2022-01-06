@@ -6,7 +6,7 @@ const uuid = require('uuid');
 
 const Database = require('../app/database');
 
-describe('POST /auth', () => {
+describe('POST /login', () => {
     const db = new Database('data/auth_test_db1.json');
     const app = require('../app/app')(db);
     const server = supertest(app);
@@ -24,7 +24,7 @@ describe('POST /auth', () => {
 
     it(
         'Valid credentails should return a valid JWT', async () => {
-            const res = await server.post('/auth')
+            const res = await server.post('/login')
                 .send('email=test@email.com&pass=password');
             expect(res.status).toEqual(200);
             let token = jwt.verify(
@@ -36,7 +36,7 @@ describe('POST /auth', () => {
 
     it(
         'Invalid credentails should return an error and no token', async () => {
-            const res = await server.post('/auth')
+            const res = await server.post('/login')
                 .send('email=test@email.com&pass=notmypassword');
             expect(res.status).toEqual(403);
             expect(res.body.token).toBeUndefined();
@@ -44,7 +44,7 @@ describe('POST /auth', () => {
 
     it(
         'Invalid email should return an error and no token', async () => {
-            const res = await server.post('/auth')
+            const res = await server.post('/login')
                 .send('email=notmyemail@email.com&pass=password');
             expect(res.status).toEqual(403);
             expect(res.body.token).toBeUndefined();
@@ -52,13 +52,13 @@ describe('POST /auth', () => {
 
     it(
         'Empty credentials should return an error and no token', async () => {
-            const res = await server.post('/auth');
+            const res = await server.post('/login');
             expect(res.status).toEqual(400);
             expect(res.body.token).toBeUndefined();
         });
 });
 
-describe('POST /auth/register', () => {
+describe('POST /register', () => {
     const db = new Database('data/auth_test_db2.json');
     const app = require('../app/app')(db);
     const server = supertest(app);
@@ -76,7 +76,7 @@ describe('POST /auth/register', () => {
 
     it(
         'Registering with a valid credentials should return a valid JWT', async () => {
-            const res = await server.post('/auth/register')
+            const res = await server.post('/register')
                 .send('name=testuser&email=test@email.com&pass=password');
             expect(res.status).toEqual(200);
             let token = jwt.verify(
@@ -88,7 +88,7 @@ describe('POST /auth/register', () => {
 
     it(
         'Registering with a username that has already been used should not result in an error and should return an valid JWT', async () => {
-            const res = await server.post('/auth/register')
+            const res = await server.post('/register')
                 .send('name=takenuser&email=test@email.com&pass=password');
             expect(res.status).toEqual(200);
             let token = jwt.verify(
@@ -100,7 +100,7 @@ describe('POST /auth/register', () => {
 
     it(
         'Registering with an email that is already used should return an error', async () => {
-            const res = await server.post('/auth/register')
+            const res = await server.post('/register')
                 .send('name=testuser&email=taken@email.com&pass=password');
             expect(res.status).toEqual(400);
             expect(res.body.token).toBeUndefined();
@@ -108,7 +108,7 @@ describe('POST /auth/register', () => {
 
     it(
         'Registering with an invalid email should return an error', async () => {
-            const res = await server.post('/auth/register')
+            const res = await server.post('/register')
                 .send('name=testuser&email=notanemail.com&pass=password');
             expect(res.status).toEqual(400);
             expect(res.body.token).toBeUndefined();
@@ -137,7 +137,7 @@ describe('POST /auth/register', () => {
                     }
                     text += `pass=${pass}`;
                 }
-                const res = await server.post('/auth/register')
+                const res = await server.post('/register')
                     .send(text);
                 expect(res.status).toEqual(400);
                 expect(res.body.token).toBeUndefined();

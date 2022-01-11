@@ -14,8 +14,10 @@ module.exports = (db) => {
 
     router.all('/:jobName', async (req, res) => {
         const { action } = req.body;
-        const { jobName } = req.params;
         const { userID } = res.locals;
+        let { jobName } = req.params;
+
+        jobName = decodeURI(jobName);
 
         let job = await db.getUserJob(userID, jobName);
 

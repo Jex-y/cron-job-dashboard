@@ -128,17 +128,17 @@ describe('GET /:jobName', () => {
                 history: new Array(runtimes.length).fill('finished')
             });
 
-            let min = mean / 1000;
-            let max = min + 0.1;
+            let min = (mean / 1000) - 0.1;
+            let max = min + 1;
             expect(res.body.meanDuration).toBeGreaterThanOrEqual(min);
             expect(res.body.meanDuration).toBeLessThanOrEqual(max);
 
             min = (runtimes.slice(-1)[0] / 1000) - 0.1;
-            max = min + 0.2;
+            max = min + 1;
             expect(res.body.lastRunDuration).toBeGreaterThanOrEqual(min);
             expect(res.body.lastRunDuration).toBeLessThanOrEqual(max);
 
-            let tolerance = 0.5;
+            let tolerance = 1;
             min = (stdev - (tolerance * stdev)) / 1000;
             max = (stdev + (tolerance * stdev)) / 1000;
             expect(res.body.stdevDuration).toBeGreaterThanOrEqual(min);

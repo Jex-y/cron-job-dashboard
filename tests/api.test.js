@@ -32,19 +32,19 @@ describe('GET /:jobName', () => {
     // });
 
     it(
-        'Getting info for a job that has not yet been run yet should result in an error', async () => {
+        'Getting info for a job that has not yet been run yet should not result in an error', async () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
 
             const res = await server.get(`/api/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
-            expect(res.status).toEqual(400);
-            expect(res.body.error).toEqual(`${jobName} has not been run`);
+            expect(res.status).toEqual(200);
+            expect(res.body.msg).toEqual(`${jobName} has not been run`);
         });
 
     it(
-        'Getting info for a job that is currently running for the first time should result in an error', async () => {
+        'Getting info for a job that is currently running for the first time should not result in an error', async () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
             await db.startRun(userID, jobName);
@@ -52,8 +52,8 @@ describe('GET /:jobName', () => {
             const res = await server.get(`/api/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
-            expect(res.status).toEqual(400);
-            expect(res.body.error).toEqual(`${jobName} is currently running for the first time`);
+            expect(res.status).toEqual(200);
+            expect(res.body.msg).toEqual(`${jobName} is currently running for the first time`);
         });
 
     it(

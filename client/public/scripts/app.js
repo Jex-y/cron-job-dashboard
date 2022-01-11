@@ -3,7 +3,6 @@
 
 (() => {
     updateAllJobs();
-    document.querySelector('#logout').addEventListener('OnClick', logout);
 })();
 
 async function getJobs() {
@@ -120,20 +119,17 @@ async function updateAllJobs() {
             } else {
                 table.appendChild(card);
             }
-            console.log(details.history);
             for (let i = 0; i < 10; i++) {
-                let style = '';
+                const segment = document.createElement('div');
+                segment.classList.add('run');
                 if (details.history[i]) {
-                    console.log(details.history[i]);
                     if (details.history[i] == 'finished') {
-                        style = ' bg-success';
+                        segment.classList.add('good');
                     } else if (details.history[i] == 'failed') {
-                        style = ' by-danger';
+                        segment.classList.add('bad');
                     }
-                    const bar = document.createElement('div');
-                    history.appendChild(bar);
-                    bar.outerHTML = `<div class="progress-bar${style}" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>`;
                 }
+                history.appendChild(segment);
             }
         })();
     }

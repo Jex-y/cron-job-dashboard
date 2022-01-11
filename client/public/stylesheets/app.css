@@ -12,3 +12,26 @@
 .job .title {
     border-bottom: solid 1px #535353;
 }
+
+#history {
+    width: 95%;
+}
+
+.run {
+    width: 10%;
+    height: 20px;
+    border: 1px solid #353535;
+    background-color: #535353;
+    border-radius: 3px;
+    margin-right: 2px;
+    float: left;
+    display: block;
+}
+
+.good {
+    background-color: green
+}
+
+.bad {
+    background-color: red;
+}

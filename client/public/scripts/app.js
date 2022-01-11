@@ -22,6 +22,8 @@ async function getJobs() {
     if (res.ok) {
         res = JSON.parse(await res.text());
         return res.jobs;
+    } else if (res.status == 403) {
+        window.location.href = '/login';
     }
 }
 
@@ -42,7 +44,9 @@ async function getJobDetails(jobName) {
     if (res.ok) {
         res = JSON.parse(await res.text());
         return res;
-    } 
+    } else if (res.status == 403) {
+        window.location.href = '/login';
+    }
 
     // Deal with token expired / currenty running errors
 }

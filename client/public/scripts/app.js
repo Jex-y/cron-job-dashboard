@@ -6,13 +6,18 @@
 })();
 
 async function getJobs() {
-    let res = await fetch('/api/jobs', {
-        method: 'GET',
-        headers: new Headers({
-            'Authorization': 'Bearer ' + getAuthToken()
-        }),
-    })
-        .catch(error => console.log('error', error));
+    let res;
+    try {
+        res = await fetch('/api/jobs', {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getAuthToken()
+            }),
+        });
+    } catch (error) {
+        console.log(error);
+        return await cannotConnect(getJobs);
+    }
 
     if (res.ok) {
         res = JSON.parse(await res.text());
@@ -26,12 +31,21 @@ async function getJobDetails(jobName) {
         headers: new Headers({
             'Authorization': 'Bearer ' + getAuthToken()
         }),
-    })
-        .catch(error => console.log('error', error));
+    });
+
+    if (!res) {
+        return await cannotConnect(async () => await getJobDetails(jobName));
+    }
+
     if (res.ok) {
         res = JSON.parse(await res.text());
         return res;
-    } 
+    } else {
+        let { error } = JSON.parse(await res.text());
+        if (error == `${jobName} has not been run`) {
+            return {};
+        }
+    }
 
     // Deal with token expired / currenty running errors
 }
@@ -41,10 +55,10 @@ async function updateAllJobs() {
     const sucsessBadge = '<span class="badge bg-success">Passing</span>';
     const failBadge = '<span class="badge bg-danger">Failed</span>';
     const runningBadge = '<span class="visually-hidden">Running...</span>';
+    const newBadge = '<span class="badge bg-info">New</span>';
     const template = document.querySelector('#job-card');
     const table = document.querySelector('#jobs-table');
     const children = table.children;
-    console.log(children);
     jobs = await jobs;
     
     for (let i = 0; i < jobs.length; i ++ ) {
@@ -64,6 +78,9 @@ async function updateAllJobs() {
             jobName.textContent = jobs[i];
             details = await details;
             switch (details.lastRunStatus) {
+            case undefined:
+                badge.innerHTML = newBadge;
+                break;
             case 'finished':
                 badge.innerHTML = sucsessBadge;
                 break;
@@ -71,8 +88,10 @@ async function updateAllJobs() {
                 badge.innerHTML = failBadge;
                 break;
             case 'running':
-            default:
                 badge.innerHTML = runningBadge;
+                break;
+            default:
+                break;
             }
 
             if (details.lastRunDuration) {          
@@ -113,16 +132,11 @@ async function updateAllJobs() {
             } else {
                 frequency.textContent = 'N/A';
             }
-            let child = children[i];
-            if (child) {
-                child.replaceWith(card);
-            } else {
-                table.appendChild(card);
-            }
+            
             for (let i = 0; i < 10; i++) {
                 const segment = document.createElement('div');
                 segment.classList.add('run');
-                if (details.history[i]) {
+                if (details.history && details.history[i]) {
                     if (details.history[i] == 'finished') {
                         segment.classList.add('good');
                     } else if (details.history[i] == 'failed') {
@@ -131,6 +145,13 @@ async function updateAllJobs() {
                 }
                 history.appendChild(segment);
             }
+
+            let child = children[i];
+            if (child) {
+                child.replaceWith(card);
+            } else {
+                table.appendChild(card);
+            }
         })();
     }
 }
@@ -138,6 +159,28 @@ async function updateAllJobs() {
 async function logout() {
     document.cookie = '';
     window.location.href = '/login';
+}
+
+async function cannotConnect(onConnected) {
+    let toast = new bootstrap.Toast(document.querySelector('#net-error'), {autohide:false});
+    toast.show();
+    let canConnect = false;
+    while (!canConnect) {
+        await sleep(5000);
+
+        try {
+            let res = await fetch('/reachable.txt', {
+                method: 'GET'
+            });
+            if (res.ok) {
+                canConnect = true;
+            }
+        } catch (error) {
+            console.log(error);
+        } 
+    }
+    toast.hide();
+    return onConnected();
 }
 
 function periodToString(period) {
@@ -171,4 +214,10 @@ function getAuthToken() {
         window.location.href = '/login';
     } 
     return token;
+}
+
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
 }

@@ -11,6 +11,10 @@
         {
             "name": "testjob",
             "user": "b840189f-d5a3-4439-9609-6590a3c3fe23"
+        },
+        {
+            "name": "TestJob2",
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23"
         }
     ],
     "runs": [

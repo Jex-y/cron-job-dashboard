@@ -35,3 +35,8 @@
 .bad {
     background-color: red;
 }
+
+.toast {
+    min-width: 300;
+    min-height: 200;
+}

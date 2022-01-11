@@ -7,7 +7,8 @@
     "start": "node ./app/server.js",
     "pretest": "npx eslint ./app/*.js ./routes/*.js",
     "test": "cross-env NODE_ENV=test jest",
-    "coverage": "cross-env NODE_ENV=test jest --coverage=true"
+    "coverage": "cross-env NODE_ENV=test jest --coverage=true",
+    "fix": "npx eslint ./app/*.js ./routes/*.js --fix"
   },
   "jest": {
     "testEnvironment": "node",

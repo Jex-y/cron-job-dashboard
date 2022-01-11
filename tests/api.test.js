@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 
 const Database = require('../app/database');
-const { exp } = require('mathjs');
 
 describe('GET /:jobName', () => {
     const db = new Database('data/api_test_db1.json');
@@ -159,7 +158,10 @@ describe('API authentication', () => {
     const app = require('../app/app')(db);
     const server = supertest(app);
     let userID = null;
-    let token = null;
+
+    beforeEach(async () => {
+        await db.clear();
+    });
 
     it(
         'Any call to the api with a token with an invalid userID should return an error', async () => {
@@ -175,9 +177,7 @@ describe('API authentication', () => {
             const res = await server.get(`/api/${jobName}`)
                 .set('authorization', 'Bearer ' + invaliduserIDToken);
 
-            expect(res.status).toEqual(403);
-
-            
+            expect(res.status).toEqual(403);    
         });
 
     it(

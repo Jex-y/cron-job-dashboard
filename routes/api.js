@@ -50,7 +50,7 @@ module.exports = (db) => {
             }
 
             let allRuns = await db.getRuns(userID, jobName);
-            let history = allRuns.filter(run => run.finish).sort((run1, run2) => Date.parse(run2.start) - Date.parse(run1.start)).slice(-10).map(run => run.status);
+            let history = allRuns.filter(run => run.finish).sort((run1, run2) => Date.parse(run1.start) - Date.parse(run2.start)).slice(-10).map(run => run.status);
             let runTimes = allRuns.filter(run => run.status == 'finished').map(run => (Date.parse(run.finish) - Date.parse(run.start)) / 1000);
             if (runTimes.length == 0) {
                 return res.status(400).send({

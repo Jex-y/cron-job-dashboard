@@ -26,26 +26,23 @@ async function getJobs() {
 }
 
 async function getJobDetails(jobName) {
-    let res = await fetch(`/api/${jobName}`, {
-        method: 'GET',
-        headers: new Headers({
-            'Authorization': 'Bearer ' + getAuthToken()
-        }),
-    });
-
-    if (!res) {
+    let res;
+    try {
+        res = await fetch(`/api/${jobName}`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getAuthToken()
+            }),
+        });
+    } catch (error) {
+        console.log(error);
         return await cannotConnect(async () => await getJobDetails(jobName));
     }
 
     if (res.ok) {
         res = JSON.parse(await res.text());
         return res;
-    } else {
-        let { error } = JSON.parse(await res.text());
-        if (error == `${jobName} has not been run`) {
-            return {};
-        }
-    }
+    } 
 
     // Deal with token expired / currenty running errors
 }

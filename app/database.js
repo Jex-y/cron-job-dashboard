@@ -1,5 +1,6 @@
 const fs = require('fs');
 const uuid = require('uuid');
+const logging = require('./logging');
 
 module.exports = class Database {
     constructor(datafile) {
@@ -175,12 +176,21 @@ module.exports = class Database {
 };
 
 async function readJSON(file) {
-    let data = fs.readFileSync(file);
-    data = JSON.parse(data);
+    let data = null;
+    try {
+        data = fs.readFileSync(file);
+        data = JSON.parse(data);
+    } catch (error) {
+        logging.error(error);
+    }
     return data;
 }
 
 async function writeJSON(file, data) {
     data = JSON.stringify(data);
-    fs.writeFileSync(file, data);
+    try {
+        fs.writeFileSync(file, data);
+    } catch (error) {
+        logging.error(error);
+    }
 }

@@ -11,34 +11,44 @@ loginForm.addEventListener('submit', async (event) => {
     });
 
     let valid = validateForm();
+    let ok = false;
+    let res = null;
+    let serverError;
+
     if (valid) {
-        let res = await fetch('/login', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }),
-            body: new URLSearchParams({
-                email: loginForm.email.value,
-                pass: loginForm.pass.value
-            }),
-        }).catch(error => console.log('error', error));
-        let ok = res.ok;
-        res = JSON.parse(await res.text());
-        // Error if could not connect to server
-        // Also button to show password
-        console.log(ok);
+        try {
+            res = await fetch('/login', {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }),
+                body: new URLSearchParams({
+                    email: loginForm.email.value,
+                    pass: loginForm.pass.value
+                }),
+            });
+            ok = res.ok;
+            res = JSON.parse(await res.text());
+
+            if (!ok) {
+                serverError = res.error;
+            }
+        } catch (error) {
+            console.log(error);
+            serverError = 'Could not connect to the server';
+        }
         if (!ok) {
             let submitError = document.getElementById('submit-error');
 
             if (submitError) {
-                submitError.innerHTML = res.error;
+                submitError.innerHTML = serverError;
             }
             else {
                 submitError = document.createElement('div');
                 document.getElementById('form-grid').appendChild(submitError);
                 submitError.outerHTML =
                     '<div class="row text-center mb-0">' +
-                    `<h6 class="text-danger mt-3 mb-0" id="submit-error">${res.error}</h6>` +
+                    `<h6 class="text-danger mt-3 mb-0" id="submit-error">${serverError}</h6>` +
                     '</div>';
             }
 

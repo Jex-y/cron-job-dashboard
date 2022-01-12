@@ -1,5 +1,6 @@
 const express = require('express');
 const math = require('mathjs');
+const jwt = require('jsonwebtoken');
 
 module.exports = (db) => {
     let router = express.Router();
@@ -12,7 +13,7 @@ module.exports = (db) => {
         return res.status(200).send({ jobs: await jobs });
     });
 
-    router.all('/:jobName', async (req, res) => {
+    router.all('/job/:jobName', async (req, res) => {
         const { action } = req.body;
         const { userID } = res.locals;
         let { jobName } = req.params;
@@ -28,9 +29,7 @@ module.exports = (db) => {
         }
 
         if (!job) {
-            if (jobName == 'job') {
-                return res.status(400).send({ error: 'Invalid job name' });
-            } else if (action == 'add') {
+            if (action == 'add') {
                 db.addJob(userID, jobName);
                 return res.status(200).send({ msg: 'Job successfully created' });
             } else if (action == 'start') {
@@ -144,5 +143,19 @@ module.exports = (db) => {
             });
         }
     });
+
+    router.get('/gen-token', async (req, res) => {
+        const { userID } = res.locals;
+        const { expire } = req.body;
+
+        let token = jwt.sign(
+            { user: userID },
+            process.env.SECRET,
+            { 'expiresIn': expire}
+        );
+
+        return res.status(200).send({ token: token});
+    });
+
     return router;
 };

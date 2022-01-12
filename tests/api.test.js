@@ -36,7 +36,7 @@ describe('GET /:jobName', () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
             expect(res.status).toEqual(200);
@@ -49,7 +49,7 @@ describe('GET /:jobName', () => {
             await db.addJob(userID, jobName);
             await db.startRun(userID, jobName);
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
             expect(res.status).toEqual(200);
@@ -64,7 +64,7 @@ describe('GET /:jobName', () => {
             await sleep(100); // wait 100ms 
             await db.endRun(userID, jobName, start);
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
             expect(res.status).toEqual(200);
@@ -115,7 +115,7 @@ describe('GET /:jobName', () => {
                 await sleep(spacing);
             }
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
             expect(res.status).toEqual(200);
@@ -174,7 +174,7 @@ describe('API authentication', () => {
                 { 'expiresIn': process.env.AUTH_TOKENLIFE }
             );
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + invaliduserIDToken);
 
             expect(res.status).toEqual(403);    
@@ -190,7 +190,7 @@ describe('API authentication', () => {
                 { 'expiresIn': process.env.AUTH_TOKENLIFE }
             );
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + invaldToken);
 
             expect(res.status).toEqual(403);
@@ -208,7 +208,7 @@ describe('API authentication', () => {
             
             await sleep(10);
 
-            const res = await server.get(`/api/${jobName}`)
+            const res = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + expiredToken);
 
             expect(res.status).toEqual(403);
@@ -217,7 +217,7 @@ describe('API authentication', () => {
     it(
         'Any call with no token should return an error', async () => {
             const jobName = 'testjob';
-            const res = await server.get(`/api/${jobName}`);
+            const res = await server.get(`/api/job/${jobName}`);
             expect(res.status).toEqual(403);
         });
 });
@@ -249,7 +249,7 @@ describe('POST /:jobName', () => {
     it(
         'Adding a new job should create a job in the database', async () => {
             const jobName = 'testjob';
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=add');
 
@@ -271,7 +271,7 @@ describe('POST /:jobName', () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=start');
 
@@ -299,7 +299,7 @@ describe('POST /:jobName', () => {
         'Staring a job that has not been created should create the job in the database and start it', async () => {
             const jobName = 'testjob';
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=start');
 
@@ -337,7 +337,7 @@ describe('POST /:jobName', () => {
             await db.addJob(userID, jobName);
             await db.startRun(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=stop');
 
@@ -350,7 +350,7 @@ describe('POST /:jobName', () => {
             await db.addJob(userID, jobName);
             await db.startRun(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=fail');
 
@@ -363,7 +363,7 @@ describe('POST /:jobName', () => {
             await db.addJob(userID, jobName);
             await sleep(100);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=stop');
 
@@ -376,7 +376,7 @@ describe('POST /:jobName', () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=fail');
 
@@ -389,20 +389,20 @@ describe('POST /:jobName', () => {
         'Trying to get, stop or fail a job that has not been created should return an error', async () => {
             const jobName = 'testjob';
 
-            const resInfo = await server.get(`/api/${jobName}`)
+            const resInfo = await server.get(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token);
 
             expect(resInfo.status).toEqual(400);
             expect(resInfo.body.error).toEqual('No such job exists');
 
-            const resStop = await server.post(`/api/${jobName}`)
+            const resStop = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=stop');
 
             expect(resStop.status).toEqual(400);
             expect(resStop.body.error).toEqual('No such job exists');
 
-            const resFail = await server.post(`/api/${jobName}`)
+            const resFail = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=fail');
 
@@ -425,7 +425,7 @@ describe('POST /:jobName', () => {
             for (const [action, allowed] of Object.entries(validMethods)) {
                 for (const method of methods) {
                     if (!(allowed.includes(method))) {
-                        const res = await server[method](`/api/${jobName}`)
+                        const res = await server[method](`/api/job/${jobName}`)
                             .set('authorization', 'Bearer ' + token)
                             .send(`action=${action}`);
                         expect(res.status).toEqual(405);
@@ -439,7 +439,7 @@ describe('POST /:jobName', () => {
             const jobName = 'testjob';
             await db.addJob(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send('action=add');
 
@@ -453,29 +453,12 @@ describe('POST /:jobName', () => {
             const action = 'not_an_action';
             await db.addJob(userID, jobName);
 
-            const res = await server.post(`/api/${jobName}`)
+            const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
                 .send(`action=${action}`);
             
             expect(res.status).toEqual(400);
             expect(res.body.error).toEqual(`Unknown action ${action}`);
-        });
-
-    it(
-        'Adding or starting a job called job should fail', async () => {
-            const resAdd = await server.post('/api/job')
-                .set('authorization', 'Bearer ' + token)
-                .send('action=add');
-
-            expect(resAdd.status).toEqual(400);
-            expect(resAdd.body.error).toEqual('Invalid job name');
-
-            const resStart = await server.post('/api/job')
-                .set('authorization', 'Bearer ' + token)
-                .send('action=start');
-
-            expect(resStart.status).toEqual(400);
-            expect(resStart.body.error).toEqual('Invalid job name');
         });
 });
 
@@ -522,6 +505,49 @@ describe('GET /jobs', () => {
 
         });
 
+});
+
+describe('GET /gen-token', () => {
+    const db = new Database('data/api_test_db4.json');
+    const app = require('../app/app')(db);
+    const server = supertest(app);
+    let userID = null;
+    let token = null;
+
+    beforeEach(async () => {
+        await db.clear();
+        userID = await db.addUser('testUser', 'test@email.com',
+            bcrypt.hashSync('password', parseInt(process.env.BCRYPT_COST))
+        );
+
+        token = jwt.sign(
+            { user: userID },
+            process.env.SECRET,
+            { 'expiresIn': process.env.AUTH_TOKENLIFE }
+        );
+    });
+
+    it(
+        'Calling should return a valid JWT that expires after the given time in seconds', async () => {
+            const expire = '10s';
+            const res = await server.get('/api/gen-token')
+                .set('authorization', 'Bearer ' + token)
+                .send(`expire=${expire}`);
+
+            console.log(res.body);
+
+            expect(res.status).toEqual(200);
+            expect(res.body.token).toBeDefined();
+            const newToken = jwt.verify(
+                res.body.token,
+                process.env.SECRET
+            );
+
+            expect(newToken.user).toEqual(userID);
+            const time = (new Date()) - 0; // For some reason this converts the time to an integer but +0 doesnt???
+            expect(newToken.iat).toBeLessThanOrEqual(time);
+            expect(newToken.exp).toEqual(newToken.iat + 10);
+        });
 });
 
 function sleep(ms) {

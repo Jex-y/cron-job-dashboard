@@ -30,7 +30,7 @@ async function getJobs() {
 async function getJobDetails(jobName) {
     let res;
     try {
-        res = await fetch(`/api/${jobName}`, {
+        res = await fetch(`/api/job/${jobName}`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + getAuthToken()

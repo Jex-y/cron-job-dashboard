@@ -48,6 +48,13 @@ async function updateAllJobs() {
         }
     })();
 
+    const noJobsText = document.querySelector('#no-jobs-text');
+    if (jobs.length == 0) {
+        noJobsText.style.display = 'block';
+    } else {
+        noJobsText.style.display = 'none';
+    }
+
 
     for (let i = 0; i < jobs.length; i++) {
         (async () => {

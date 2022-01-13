@@ -528,13 +528,11 @@ describe('GET /gen-token', () => {
     });
 
     it(
-        'Calling should return a valid JWT that expires after the given time in seconds', async () => {
+        'Calling with an expiry time should return a valid JWT that expires after the given time', async () => {
             const expire = '10s';
             const res = await server.get('/api/gen-token')
                 .set('authorization', 'Bearer ' + token)
                 .send(`expire=${expire}`);
-
-            console.log(res.body);
 
             expect(res.status).toEqual(200);
             expect(res.body.token).toBeDefined();
@@ -547,6 +545,23 @@ describe('GET /gen-token', () => {
             const time = (new Date()) - 0; // For some reason this converts the time to an integer but +0 doesnt???
             expect(newToken.iat).toBeLessThanOrEqual(time);
             expect(newToken.exp).toEqual(newToken.iat + 10);
+        });
+
+    it(
+        'Calling with no parameters should return a valid JWT that does not expire', async () => {
+            const res = await server.get('/api/gen-token')
+                .set('authorization', 'Bearer ' + token);
+
+            expect(res.status).toEqual(200);
+            expect(res.body.token).toBeDefined();
+            const newToken = jwt.verify(
+                res.body.token,
+                process.env.SECRET
+            );
+
+            expect(newToken.user).toEqual(userID);
+            expect(newToken.exp).toBeUndefined();
+            
         });
 });
 

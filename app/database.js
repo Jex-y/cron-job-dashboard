@@ -22,7 +22,7 @@ module.exports = class Database {
             name: name,
             email: email,
             pass: await password,
-            id: id,
+            id: id
         });
         return id;
     }

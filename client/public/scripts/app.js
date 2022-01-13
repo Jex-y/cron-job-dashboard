@@ -162,6 +162,47 @@ async function logout() {
     window.location.href = '/login';
 }
 
+async function expiresClicked (checked) {
+    const expiresNumbers = document.getElementById('expires-number');
+    const expiresUnits = document.getElementById('expires-units');
+    expiresNumbers.disabled = !checked;
+    expiresUnits.disabled = !checked;
+}
+
+async function generateApiToken() {
+    const expires = document.getElementById('expires');
+    let res;
+    let params = '';
+    if (expires.checked) {
+        const expiresNumbers = document.getElementById('expires-number');
+        const expiresUnits = document.getElementById('expires-units');
+        params = '?' + new URLSearchParams({
+            expires: expiresNumbers.value + expiresUnits.value
+        });
+    }
+    try {
+        res = await fetch('/api/gen-token' + params, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getAuthToken()
+            }),
+        });
+    } catch (error) {
+        console.log(error);
+        return await cannotConnect(async () => await generateApiToken());
+    }
+
+    if (res.ok) {
+        res = JSON.parse(await res.text());
+    } else if (res.status == 403) {
+        window.location.href = '/login';
+    }
+
+    const apiTokenValue = document.getElementById('api-token-value');
+    apiTokenValue.value = res.token;
+    apiTokenValue.disabled = false;
+}
+
 async function cannotConnect(onConnected) {
     let toast = new bootstrap.Toast(document.querySelector('#net-error'), {autohide:false});
     toast.show();
@@ -183,6 +224,7 @@ async function cannotConnect(onConnected) {
     toast.hide();
     return onConnected();
 }
+
 
 function periodToString(period) {
     function checkPeriod(period, secondsInPeriod, periodName) {

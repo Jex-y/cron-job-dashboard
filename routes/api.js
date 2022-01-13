@@ -148,10 +148,14 @@ module.exports = (db) => {
         const { userID } = res.locals;
         const { expire } = req.body;
 
+        let options = {};
+        if (expire) {
+            options = { 'expiresIn': expire} ;
+        }
         let token = jwt.sign(
             { user: userID },
             process.env.SECRET,
-            { 'expiresIn': expire}
+            options
         );
 
         return res.status(200).send({ token: token});

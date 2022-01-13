@@ -151,6 +151,24 @@ describe('GET /:jobName', () => {
             expect(res.body.frequency).toBeGreaterThanOrEqual(min);
             expect(res.body.frequency).toBeLessThanOrEqual(max);
         });
+
+    it(
+        'Deleting a job should remove it and its runs from the database', async () => {
+            const jobName = 'testjob';
+            await db.addJob(userID, jobName);
+            const start = await db.startRun(userID, jobName);
+            await sleep(100); // wait 100ms 
+            await db.endRun(userID, jobName, start);
+            const res = await server.delete(`/api/job/${jobName}`)
+                .set('authorization', 'Bearer ' + token)
+                .query({ action : 'delete' });
+
+            expect(res.status).toEqual(200);
+            const jobs = await db.getJobsByUser(userID, jobName);
+            expect(jobs).toHaveLength(0);
+            const runs = await db.getRuns(userID, jobName);
+            expect(runs).toHaveLength(0);
+        });
 });
 
 describe('API authentication', () => {
@@ -251,7 +269,7 @@ describe('POST /:jobName', () => {
             const jobName = 'testjob';
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=add');
+                .query({action : 'add'});
 
             expect(res.status).toEqual(200);
 
@@ -273,7 +291,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=start');
+                .query({action : 'start'});
 
             expect(res.status).toEqual(200);
 
@@ -301,7 +319,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=start');
+                .query({action : 'start'});
 
             expect(res.status).toEqual(200);
 
@@ -339,7 +357,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=stop');
+                .query({action : 'stop'});
 
             expect(res.status).toEqual(200);
         });
@@ -352,7 +370,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=fail');
+                .query({action : 'fail'});
 
             expect(res.status).toEqual(200);
         });
@@ -365,7 +383,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=stop');
+                .query({action : 'stop'});
 
             expect(res.status).toEqual(400);
             expect(res.body.error).toEqual('Job was not running');
@@ -378,7 +396,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=fail');
+                .query({action : 'fail'});
 
             expect(res.status).toEqual(400);
             expect(res.body.error).toEqual('Job was not running');
@@ -397,14 +415,14 @@ describe('POST /:jobName', () => {
 
             const resStop = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=stop');
+                .query({action : 'stop'});
 
             expect(resStop.status).toEqual(400);
             expect(resStop.body.error).toEqual('No such job exists');
 
             const resFail = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=fail');
+                .query({action : 'fail'});
 
             expect(resFail.status).toEqual(400);
             expect(resFail.body.error).toEqual('No such job exists');
@@ -412,9 +430,10 @@ describe('POST /:jobName', () => {
 
     it(
         'A call with the wrong method shoud return an error', async () => {
-            const methods = ['get', 'post', 'put', 'del'];
+            const methods = ['get', 'post', 'put', 'delete'];
             const validMethods = {
                 '': ['get'],
+                'delete' : ['delete'],
                 'add': ['post'],
                 'start': ['post'],
                 'stop': ['post'],
@@ -427,7 +446,10 @@ describe('POST /:jobName', () => {
                     if (!(allowed.includes(method))) {
                         const res = await server[method](`/api/job/${jobName}`)
                             .set('authorization', 'Bearer ' + token)
-                            .send(`action=${action}`);
+                            .query({action : action});
+                        if (res.status != 405) {
+                            console.log(`${action} allowed method ${method} which it should not have.`);
+                        }
                         expect(res.status).toEqual(405);
                     }
                 }
@@ -441,7 +463,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send('action=add');
+                .query({action : 'add'});
 
             expect(res.status).toEqual(400);
             expect(res.body.error).toEqual(`${jobName} already exists`);
@@ -455,7 +477,7 @@ describe('POST /:jobName', () => {
 
             const res = await server.post(`/api/job/${jobName}`)
                 .set('authorization', 'Bearer ' + token)
-                .send(`action=${action}`);
+                .query({ action : action});
             
             expect(res.status).toEqual(400);
             expect(res.body.error).toEqual(`Unknown action ${action}`);
@@ -532,7 +554,7 @@ describe('GET /gen-token', () => {
             const expire = '10s';
             const res = await server.get('/api/gen-token')
                 .set('authorization', 'Bearer ' + token)
-                .send(`expire=${expire}`);
+                .query({expire : expire});
 
             expect(res.status).toEqual(200);
             expect(res.body.token).toBeDefined();

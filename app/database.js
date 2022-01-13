@@ -45,6 +45,14 @@ module.exports = class Database {
         });
     }
 
+    async deleteJob(userID, jobName) {
+        await this.deleteRecord('jobs', 
+            (item) => item.name == jobName && item.user == userID );
+
+        return await this.deleteRecord('runs',
+            (item) => item.name == jobName && item.user == userID);
+    }
+
     async startRun(userID, jobName) {
         let start = (new Date()).toISOString();
         await this.addRecord('runs', {
@@ -147,7 +155,6 @@ module.exports = class Database {
         await this.getFileLock();
         this.fileLock = true;
         let data = await readJSON(this.datafile);
-        // Error here somewhere when finishing job.
         if (data) {
             for (let i = 0; i < data[table].length; i++) {
                 if (check(data[table][i])) {
@@ -158,8 +165,25 @@ module.exports = class Database {
                 }
             }
         }
+        await writeJSON(this.datafile, data);
         this.fileLock = false;
-        writeJSON(this.datafile, data);
+    }
+
+    async deleteRecord(table, check) {
+        await this.getFileLock();
+        this.fileLock = true;
+        let data = await readJSON(this.datafile);
+        let newTable = [];
+        if (data) {
+            for (let i = 0; i < data[table].length; i++) {
+                if (!check(data[table][i])) {
+                    newTable.push(data[table][i]);
+                }
+            }
+        }
+        data[table] = newTable;
+        await writeJSON(this.datafile, data);
+        this.fileLock = false;
     }
 
     async addRecord(table, item) {

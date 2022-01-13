@@ -2,53 +2,30 @@
 'use strict';
 
 (() => {
+    const deleteModal = document.getElementById('confirm-delete-modal');
+    deleteModal.addEventListener(
+        'show.bs.modal',
+        async (event) => {
+            const button = event.relatedTarget;
+            const jobName = button.getAttribute('data-bs-jobname');
+            const deleteButton = deleteModal.querySelector('#delete-button');
+            deleteButton.addEventListener(
+                'click',
+                async () => await deleteJob(jobName));
+        });
+
     updateAllJobs();
 })();
 
 async function getJobs() {
-    let res;
-    try {
-        res = await fetch('/api/jobs', {
-            method: 'GET',
-            headers: new Headers({
-                'Authorization': 'Bearer ' + getAuthToken()
-            }),
-        });
-    } catch (error) {
-        console.log(error);
-        return await cannotConnect(getJobs);
-    }
-
-    if (res.ok) {
-        res = JSON.parse(await res.text());
-        return res.jobs;
-    } else if (res.status == 403) {
-        window.location.href = '/login';
-    }
+    return (await apiCall('/api/jobs', 'GET', getJobs)).jobs;
 }
 
 async function getJobDetails(jobName) {
-    let res;
-    try {
-        res = await fetch(`/api/job/${jobName}`, {
-            method: 'GET',
-            headers: new Headers({
-                'Authorization': 'Bearer ' + getAuthToken()
-            }),
-        });
-    } catch (error) {
-        console.log(error);
-        return await cannotConnect(async () => await getJobDetails(jobName));
-    }
-
-    if (res.ok) {
-        res = JSON.parse(await res.text());
-        return res;
-    } else if (res.status == 403) {
-        window.location.href = '/login';
-    }
-
-    // Deal with token expired / currenty running errors
+    return await apiCall(
+        `/api/job/${jobName}`,
+        'GET',
+        async () => await getJobDetails(jobName));
 }
 
 async function updateAllJobs() {
@@ -61,8 +38,18 @@ async function updateAllJobs() {
     const table = document.querySelector('#jobs-table');
     const children = table.children;
     jobs = await jobs;
-    
-    for (let i = 0; i < jobs.length; i ++ ) {
+
+    (async () => {
+        for (let i = 0; i < children.length; i++) {
+            const jobName = children[i].querySelector('#jobName');
+            if (!(jobs.includes(jobName))) {
+                children[i].remove();
+            }
+        }
+    })();
+
+
+    for (let i = 0; i < jobs.length; i++) {
         (async () => {
             let details = getJobDetails(jobs[i]);
 
@@ -75,8 +62,10 @@ async function updateAllJobs() {
             const lastRun = card.querySelector('#last-run');
             const frequency = card.querySelector('#frequency');
             const history = card.querySelector('#history');
+            const deleteButton = card.querySelector('#delete-button');
 
             jobName.textContent = jobs[i];
+            deleteButton.setAttribute('data-bs-jobname', jobs[i]);
             details = await details;
             switch (details.lastRunStatus) {
             case undefined:
@@ -95,7 +84,7 @@ async function updateAllJobs() {
                 break;
             }
 
-            if (details.lastRunDuration) {          
+            if (details.lastRunDuration) {
                 const mins = Math.trunc(details.lastRunDuration / 60);
                 let secs = Math.trunc(details.lastRunDuration % 60);
                 secs = String(secs);
@@ -103,12 +92,12 @@ async function updateAllJobs() {
                     secs = '0' + secs;
                 }
 
-                lastDuration.textContent =  `${mins}:${secs}`;
+                lastDuration.textContent = `${mins}:${secs}`;
             } else {
                 lastDuration.textContent = '--:--';
             }
 
-            if (details.meanDuration) {          
+            if (details.meanDuration) {
                 const mins = Math.trunc(details.meanDuration / 60);
                 let secs = Math.trunc(details.meanDuration % 60);
                 secs = String(secs);
@@ -116,7 +105,7 @@ async function updateAllJobs() {
                     secs = '0' + secs;
                 }
 
-                meanDuration.textContent =  `${mins}:${secs}`;
+                meanDuration.textContent = `${mins}:${secs}`;
             } else {
                 meanDuration.textContent = '--:--';
             }
@@ -133,7 +122,7 @@ async function updateAllJobs() {
             } else {
                 frequency.textContent = 'N/A';
             }
-            
+
             for (let i = 0; i < 10; i++) {
                 const segment = document.createElement('div');
                 segment.classList.add('run');
@@ -162,7 +151,7 @@ async function logout() {
     window.location.href = '/login';
 }
 
-async function expiresClicked (checked) {
+async function expiresClicked(checked) {
     const expiresNumbers = document.getElementById('expires-number');
     const expiresUnits = document.getElementById('expires-units');
     expiresNumbers.disabled = !checked;
@@ -171,7 +160,6 @@ async function expiresClicked (checked) {
 
 async function generateApiToken() {
     const expires = document.getElementById('expires');
-    let res;
     let params = '';
     if (expires.checked) {
         const expiresNumbers = document.getElementById('expires-number');
@@ -180,31 +168,28 @@ async function generateApiToken() {
             expires: expiresNumbers.value + expiresUnits.value
         });
     }
-    try {
-        res = await fetch('/api/gen-token' + params, {
-            method: 'GET',
-            headers: new Headers({
-                'Authorization': 'Bearer ' + getAuthToken()
-            }),
-        });
-    } catch (error) {
-        console.log(error);
-        return await cannotConnect(async () => await generateApiToken());
-    }
 
-    if (res.ok) {
-        res = JSON.parse(await res.text());
-    } else if (res.status == 403) {
-        window.location.href = '/login';
-    }
+    const token = (await apiCall(
+        '/api/gen-token' + params,
+        'GET',
+        generateApiToken))
+        .token;
 
     const apiTokenValue = document.getElementById('api-token-value');
-    apiTokenValue.value = res.token;
+    apiTokenValue.value = token;
     apiTokenValue.disabled = false;
 }
 
+async function deleteJob(jobName) {
+    await apiCall(
+        `/api/job/${jobName}?action=delete`,
+        'DELETE',
+        async () => await deleteJob(jobName));
+    await updateAllJobs();
+}
+
 async function cannotConnect(onConnected) {
-    let toast = new bootstrap.Toast(document.querySelector('#net-error'), {autohide:false});
+    let toast = new bootstrap.Toast(document.querySelector('#net-error'), { autohide: false });
     toast.show();
     let canConnect = false;
     while (!canConnect) {
@@ -219,10 +204,34 @@ async function cannotConnect(onConnected) {
             }
         } catch (error) {
             console.log(error);
-        } 
+        }
     }
     toast.hide();
     return onConnected();
+}
+
+async function apiCall(url, method, cannotConnectCallback) {
+    let res;
+    try {
+        res = await fetch(url, {
+            method: method,
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getAuthToken()
+            }),
+        });
+    } catch (error) {
+        console.log(error);
+        return await cannotConnect(cannotConnectCallback);
+    }
+
+    if (res.ok) {
+        res = JSON.parse(await res.text());
+        return res;
+    } else if (res.status == 403) {
+        window.location.href = '/login';
+    } else {
+        console.log(res);
+    }
 }
 
 
@@ -235,15 +244,15 @@ function periodToString(period) {
         return `Every ${period} ${periodName}s`;
     }
     const periods = {
-        Month : 60 * 60 * 24 * 30.42,
-        Week : 60 * 60 * 24 * 7,
-        Day : 60 * 60 * 24,
-        Hour : 60 * 60,
-        Min : 60,
-        Sec : 1,
-        Mili : 0.001
+        Month: 60 * 60 * 24 * 30.42,
+        Week: 60 * 60 * 24 * 7,
+        Day: 60 * 60 * 24,
+        Hour: 60 * 60,
+        Min: 60,
+        Sec: 1,
+        Mili: 0.001
     };
-    for  (const [periodName, periodSeconds] of Object.entries(periods)) {
+    for (const [periodName, periodSeconds] of Object.entries(periods)) {
         if (period >= periodSeconds) {
             return checkPeriod(period, periodSeconds, periodName);
         }
@@ -255,7 +264,7 @@ function getAuthToken() {
     const token = authCookieRegex.exec(document.cookie).groups.token;
     if (!token) {
         window.location.href = '/login';
-    } 
+    }
     return token;
 }
 

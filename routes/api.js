@@ -14,15 +14,27 @@ module.exports = (db) => {
     });
 
     router.all('/job/:jobName', async (req, res) => {
-        const { action } = req.body;
+        const { action } = req.query;
         const { userID } = res.locals;
         let { jobName } = req.params;
 
         jobName = decodeURI(jobName);
-
         let job = await db.getUserJob(userID, jobName);
 
-        if (!(req.method == 'GET' && !action) && !(req.method == 'POST' && action)) {
+        const validMethods = {
+            delete: ['delete'],
+            add: ['post'],
+            start: ['post'],
+            stop: ['post'],
+            fail: ['post']
+        };
+        const postActions = ['add', 'start', 'stop', 'fail'];
+        const method = req.method.toUpperCase();
+        if (
+            ((!action) && (method != 'GET')) ||
+            ((action == 'delete') && (method != 'DELETE')) ||
+            (postActions.includes(action) && (method != 'POST'))
+        ) {
             return res.status(405).send({
                 error: 'Invalid method, use GET for getting job data and POST for modifying a job'
             });
@@ -78,14 +90,14 @@ module.exports = (db) => {
                 lastTooSlow = lastRunDuration > max;
                 lastTooFast = lastRunDuration < min;
             }
-            
+
             let frequency = null;
             if (allRuns.length >= 2) {
                 const startDates = allRuns.map(run => Date.parse(run.start));
                 startDates.sort();
                 const periods = [];
-                for (let i = 1; i < startDates.length; i ++) {
-                    periods.push((startDates[i] - startDates[i-1])/1000);
+                for (let i = 1; i < startDates.length; i++) {
+                    periods.push((startDates[i] - startDates[i - 1]) / 1000);
                 }
                 if (periods.length > 1) {
                     const meanPeriod = math.mean(periods);
@@ -95,7 +107,7 @@ module.exports = (db) => {
                     const max = meanPeriod + (periodOutlierStdevs * stdevPeriod);
                     const periodsExOutliers = periods.filter(period => (min <= period) && (period <= max));
                     frequency = math.mean(periodsExOutliers);
-                } else{
+                } else {
                     frequency = periods[0];
                 }
             }
@@ -135,6 +147,9 @@ module.exports = (db) => {
                 db.failRun(userID, jobName, run.start);
                 return res.status(200).send({ msg: `${jobName} failed` });
             }
+        } else if (action == 'delete') {
+            await db.deleteJob(userID, jobName);
+            return res.status(200).send({ msg: `${jobName} deleted` });
         } else if (action == 'add') {
             return res.status(400).send({ error: `${jobName} already exists` });
         } else {
@@ -146,11 +161,11 @@ module.exports = (db) => {
 
     router.get('/gen-token', async (req, res) => {
         const { userID } = res.locals;
-        const { expire } = req.body;
+        const { expire } = req.query;
 
         let options = {};
         if (expire) {
-            options = { 'expiresIn': expire} ;
+            options = { 'expiresIn': expire };
         }
         let token = jwt.sign(
             { user: userID },
@@ -158,7 +173,7 @@ module.exports = (db) => {
             options
         );
 
-        return res.status(200).send({ token: token});
+        return res.status(200).send({ token: token });
     });
 
     return router;

@@ -31,6 +31,16 @@
           API Keys
         </button>
       </div>
+      <div class="nar navbar-nav mx-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#add-job-modal"
+        >
+          Add Job
+        </button>
+      </div>
       <ul class="nav navbar-nav ms-auto justify-content-end mx-3">
         <li class="nav-item">
           <button type="button" class="btn btn-secondary" onclick="logout()">
@@ -72,13 +82,109 @@
       class="modal fade"
       id="api-keys-modal"
       tabindex="-1"
-      aria-labelledby="exampleModalLabel"
+      aria-labelledby="api-keys-modal-label"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
+            <h5 class="modal-title" id="api-keys-modal-label">
+              Generate a new API token
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container col">
+              <div class="row">
+                <form id="api-key-form">
+                  <div class="row mb-3">
+                    <div class="col-1">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="expires"
+                        onclick="expiresClicked(this.checked)"
+                      />
+                    </div>
+                    <div class="col">
+                      <label class="form-check-label" for="expires">
+                        Expires
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="expires-number"
+                        placeholder="Expires after"
+                        disabled="true"
+                        autofocus
+                      />
+                    </div>
+                    <div class="col">
+                      <div class="dropdown">
+                        <select
+                          class="form-select"
+                          id="expires-units"
+                          aria-label="Select units"
+                          disabled="true"
+                        >
+                          <option selected>Units</option>
+                          <option value="m">Mins</option>
+                          <option value="h">Hours</option>
+                          <option value="d">Days</option>
+                          <option value="w">Weeks</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row px-2">
+                    <input
+                      type="text"
+                      id="api-token-value"
+                      disabled="true"
+                      placeholder="API Token"
+                      readonly
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="generateApiToken()">Generate</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add job modal -->
+    <div
+      class="modal fade"
+      id="add-job-modal"
+      tabindex="-1"
+      aria-labelledby="add-job-modal-label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="add-job-modal-label">
               Generate a new API token
             </h5>
             <button

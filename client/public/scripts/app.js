@@ -54,10 +54,10 @@ async function updateAllJobs() {
     } else {
         noJobsText.style.display = 'none';
     }
-
+    let prev = Promise.resolve();
 
     for (let i = 0; i < jobs.length; i++) {
-        (async () => {
+        prev = (async (prev) => {
             let details = getJobDetails(jobs[i]);
 
             let card = template.content.cloneNode(true);
@@ -143,13 +143,15 @@ async function updateAllJobs() {
                 history.appendChild(segment);
             }
 
+            await prev;
+
             let child = children[i];
             if (child) {
                 child.replaceWith(card);
             } else {
                 table.appendChild(card);
             }
-        })();
+        })(prev);
     }
 }
 
@@ -185,6 +187,34 @@ async function generateApiToken() {
     const apiTokenValue = document.getElementById('api-token-value');
     apiTokenValue.value = token;
     apiTokenValue.disabled = false;
+}
+
+async function addJob() {
+    const form = document.getElementById('add-job-form');
+    const name = form.name.value;
+
+    let res;
+    try {
+        res = await fetch(`/api/job/${name}?action=add`, {
+            method: 'POST',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getAuthToken()
+            }),
+        });
+    } catch (error) {
+        console.log(error);
+        return await cannotConnect(addJob);
+    }
+
+    if (!(res.ok)) {
+        res = JSON.parse(await res.text());
+        document.getElementById('add-job-error').innerHTML = res.error;
+        form.name.setCustomValidity('_');
+        form.classList.add('was-validated');
+    } else {
+        document.getElementById('close-add-job-modal').click();
+        updateAllJobs();
+    }
 }
 
 async function deleteJob(jobName) {
@@ -238,6 +268,8 @@ async function apiCall(url, method, cannotConnectCallback) {
         window.location.href = '/login';
     } else {
         console.log(res);
+        res = JSON.parse(await res.text());
+        return res;
     }
 }
 

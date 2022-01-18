@@ -1,351 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossorigin="anonymous"
-    />
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link href="./stylesheets/style.css" rel="stylesheet" />
-    <link href="./stylesheets/app.css" rel="stylesheet" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
 
-    <title>App</title>
-  </head>
+  <link href="./stylesheets/style.css" rel="stylesheet" />
+  <link href="./stylesheets/app.css" rel="stylesheet" />
 
-  <body>
-    <nav class="navbar sticky-top shadow-lg">
-      <div class="nar navbar-nav" style="margin-left: 4%">
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#api-keys-modal"
-        >
-          API Keys
+  <title>App</title>
+</head>
+
+<body>
+  <nav class="navbar sticky-top shadow-lg">
+    <div class="nar navbar-nav" style="margin-left: 4%">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#api-keys-modal">
+        API Keys
+      </button>
+    </div>
+    <div class="nar navbar-nav mx-3">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-job-modal">
+        Add Job
+      </button>
+    </div>
+    <ul class="nav navbar-nav ms-auto justify-content-end mx-3">
+      <li class="nav-item">
+        <button type="button" class="btn btn-secondary" onclick="logout()">
+          Log out
         </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Network error notification -->
+  <div class="position-relative" aria-live="polite" aria-atomic="true">
+    <div class="toast-container position-absolute p-3 top-0 end-0">
+      <div class="toast" id="net-error">
+        <div class="toast-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+            class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+            <path
+              d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z" />
+            <path
+              d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z" />
+          </svg>
+          <strong class="mr-auto mx-3">Network Error</strong>
+        </div>
+        <div class="toast-body">The server cannot be reached!</div>
       </div>
-      <div class="nar navbar-nav mx-3">
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#add-job-modal"
-        >
-          Add Job
-        </button>
-      </div>
-      <ul class="nav navbar-nav ms-auto justify-content-end mx-3">
-        <li class="nav-item">
-          <button type="button" class="btn btn-secondary" onclick="logout()">
-            Log out
+    </div>
+  </div>
+
+  <!-- API Keys modal -->
+  <div class="modal fade" id="api-keys-modal" tabindex="-1" aria-labelledby="api-keys-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="api-keys-modal-label">
+            Generate a new API token
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container col">
+            <div class="row">
+              <form id="api-key-form">
+                <div class="row mb-3">
+                  <div class="col-1">
+                    <input class="form-check-input" type="checkbox" value="" id="expires"
+                      onclick="expiresClicked(this.checked)" />
+                  </div>
+                  <div class="col">
+                    <label class="form-check-label" for="expires">
+                      Expires
+                    </label>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <input type="number" class="form-control" id="expires-number" placeholder="Expires after"
+                      disabled="true" autofocus />
+                  </div>
+                  <div class="col">
+                    <div class="dropdown">
+                      <select class="form-select" id="expires-units" aria-label="Select units" disabled="true">
+                        <option selected>Units</option>
+                        <option value="m">Mins</option>
+                        <option value="h">Hours</option>
+                        <option value="d">Days</option>
+                        <option value="w">Weeks</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row px-2">
+                  <input type="text" id="api-token-value" disabled="true" placeholder="API Token" readonly />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="generateApiToken()">Generate</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
           </button>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Network error notification -->
-    <div class="position-relative" aria-live="polite" aria-atomic="true">
-      <div class="toast-container position-absolute p-3 top-0 end-0">
-        <div class="toast" id="net-error">
-          <div class="toast-header">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              fill="currentColor"
-              class="bi bi-exclamation-triangle"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"
-              />
-              <path
-                d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"
-              />
-            </svg>
-            <strong class="mr-auto mx-3">Network Error</strong>
-          </div>
-          <div class="toast-body">The server cannot be reached!</div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- API Keys modal -->
-    <div
-      class="modal fade"
-      id="api-keys-modal"
-      tabindex="-1"
-      aria-labelledby="api-keys-modal-label"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="api-keys-modal-label">
-              Generate a new API token
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container col">
+  <!-- Add job modal -->
+  <div class="modal fade" id="add-job-modal" tabindex="-1" aria-labelledby="add-job-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="add-job-modal-label">
+            Add a new job
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container col">
+            <form id="add-job-form" novalidate>
               <div class="row">
-                <form id="api-key-form">
-                  <div class="row mb-3">
-                    <div class="col-1">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="expires"
-                        onclick="expiresClicked(this.checked)"
-                      />
-                    </div>
-                    <div class="col">
-                      <label class="form-check-label" for="expires">
-                        Expires
-                      </label>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col">
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="expires-number"
-                        placeholder="Expires after"
-                        disabled="true"
-                        autofocus
-                      />
-                    </div>
-                    <div class="col">
-                      <div class="dropdown">
-                        <select
-                          class="form-select"
-                          id="expires-units"
-                          aria-label="Select units"
-                          disabled="true"
-                        >
-                          <option selected>Units</option>
-                          <option value="m">Mins</option>
-                          <option value="h">Hours</option>
-                          <option value="d">Days</option>
-                          <option value="w">Weeks</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row px-2">
-                    <input
-                      type="text"
-                      id="api-token-value"
-                      disabled="true"
-                      placeholder="API Token"
-                      readonly
-                    />
-                  </div>
-                </form>
+                <input type="text" id="name" placeholder="Job Name" autofocus required />
+                <div class="invalid-feedback" id='add-job-error'></div>
               </div>
-            </div>
+            </form>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" onclick="generateApiToken()">Generate</button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="addJob()">Add</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-add-job-modal">
+            Close
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Add job modal -->
-    <div
-      class="modal fade"
-      id="add-job-modal"
-      tabindex="-1"
-      aria-labelledby="add-job-modal-label"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="add-job-modal-label">
-              Generate a new API token
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container col">
-              <div class="row">
-                <form id="api-key-form">
-                  <div class="row mb-3">
-                    <div class="col-1">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="expires"
-                        onclick="expiresClicked(this.checked)"
-                      />
-                    </div>
-                    <div class="col">
-                      <label class="form-check-label" for="expires">
-                        Expires
-                      </label>
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col">
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="expires-number"
-                        placeholder="Expires after"
-                        disabled="true"
-                        autofocus
-                      />
-                    </div>
-                    <div class="col">
-                      <div class="dropdown">
-                        <select
-                          class="form-select"
-                          id="expires-units"
-                          aria-label="Select units"
-                          disabled="true"
-                        >
-                          <option selected>Units</option>
-                          <option value="m">Mins</option>
-                          <option value="h">Hours</option>
-                          <option value="d">Days</option>
-                          <option value="w">Weeks</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row px-2">
-                    <input
-                      type="text"
-                      id="api-token-value"
-                      disabled="true"
-                      placeholder="API Token"
-                      readonly
-                    />
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" onclick="generateApiToken()">Generate</button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+  <!-- Delete job confrimation modal -->
+  <div class="modal fade" id="confirm-delete-modal" tabindex="-1" aria-labelledby="delete-modal-label"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-modal-label">Are you sure?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Do you really want to delete this job?
+          The job and all runs will be deleted from the database.
+          This cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="delete-button" data-bs-dismiss="modal">Delete</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Delete job confrimation modal -->
-    <div class="modal fade" id="confirm-delete-modal" tabindex="-1" aria-labelledby="delete-modal-label" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="delete-modal-label">Are you sure?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Do you really want to delete this job? 
-            The job and all runs will be deleted from the database.
-            This cannot be undone.
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger" id="delete-button" data-bs-dismiss="modal">Delete</button>
-          </div>
+  <div class="container pt-3" style="position: relative; z-index: 0; min-width: 90%">
+    <div class="row row-cols-auto" id="jobs-table"></div>
+  </div>
+
+  <div class="container-fluid text-center text-white" style="height: 100%; display: none;" id="no-jobs-text">
+    <h2 style="position: relative; top: 35%;">
+      You have no jobs, add one to see it here!
+    </h2>
+  </div>
+
+  <template id="job-card">
+    <div class="col m-3 border rounded job">
+      <div class="row title mb-3">
+        <div class="col-8 h4 text-light mb-3" id="jobName">Job Name</div>
+        <div class="col-2" id="badge"></div>
+        <div class="col-1 justify-content-end pl-5" id="delete-button" data-bs-toggle="modal"
+          data-bs-target="#confirm-delete-modal"">
+            <svg xmlns=" http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-trash"
+          viewBox="0 0 16 16">
+          <path
+            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+          <path fill-rule="evenodd"
+            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+          </svg>
         </div>
       </div>
-    </div>
-
-    <div class="container" style="position: relative; z-index: 0">
-      <div class="row row-cols-auto" id="jobs-table"></div>
-    </div>
-
-    <div class="container-fluid text-center text-white" style="height: 100%; display: none;" id="no-jobs-text">
-      <h2 style="position: relative; top: 35%;">
-        You have no jobs, add one to see it here!
-      </h2>
-    </div>
-
-    <template id="job-card">
-      <div class="col m-3 border rounded job">
-        <div class="row title mb-3">
-          <div class="col-8 h4 text-light mb-3" id="jobName">Job Name</div>
-          <div class="col-2" id="badge"></div>
-          <div class="col-1 justify-content-end pl-5" id="delete-button" data-bs-toggle="modal" data-bs-target="#confirm-delete-modal"">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-trash" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-            </svg>
+      <div class="row details justify-content-center">
+        <div class="row mb-2">
+          <div class="col text-light">
+            <h6>Last run duration</h6>
+            <h5 id="last-duration">3:12</h5>
+          </div>
+          <div class="col text-light">
+            <h6>Average run duration</h6>
+            <h5 id="avg-duration">2:14</h5>
           </div>
         </div>
-        <div class="row details justify-content-center">
-          <div class="row mb-2">
-            <div class="col text-light">
-              <h6>Last run duration</h6>
-              <h5 id="last-duration">3:12</h5>
-            </div>
-            <div class="col text-light">
-              <h6>Average run duration</h6>
-              <h5 id="avg-duration">2:14</h5>
-            </div>
+        <div class="row mb-2">
+          <div class="col text-light">
+            <h6>Last updated</h6>
+            <h5 id="last-run">3 days ago</h5>
           </div>
-          <div class="row mb-2">
-            <div class="col text-light">
-              <h6>Last updated</h6>
-              <h5 id="last-run">3 days ago</h5>
-            </div>
-            <div class="col text-light">
-              <h6>Frequency</h6>
-              <h5 id="frequency">Every 3 days</h5>
-            </div>
+          <div class="col text-light">
+            <h6>Frequency</h6>
+            <h5 id="frequency">Every 3 days</h5>
           </div>
-          <div
-            class="row flex-nowrap mb-1 justify-content-center"
-            id="history"
-          ></div>
         </div>
+        <div class="row flex-nowrap mb-1 justify-content-center" id="history"></div>
       </div>
-    </template>
-    <script src="scripts/sugar.js"></script>
-    <script src="scripts/app.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+    </div>
+  </template>
+  <script src="scripts/sugar.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>

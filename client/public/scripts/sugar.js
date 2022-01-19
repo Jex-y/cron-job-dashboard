@@ -6,6 +6,7 @@
  *  https://sugarjs.com/
  *
  * ---------------------------- */
+/* eslint-disable */
 (function () {
     'use strict';
 
@@ -628,30 +629,30 @@
 
     function wrapInstanceMethodFixed(fn) {
         switch (fn.length) {
-            // Wrapped instance methods will always be passed the instance
-            // as the first argument, but requiring the argument to be defined
-            // may cause confusion here, so return the same wrapped function regardless.
-            case 0:
-            case 1:
-                return function () {
-                    return fn(this);
-                };
-            case 2:
-                return function (a) {
-                    return fn(this, a);
-                };
-            case 3:
-                return function (a, b) {
-                    return fn(this, a, b);
-                };
-            case 4:
-                return function (a, b, c) {
-                    return fn(this, a, b, c);
-                };
-            case 5:
-                return function (a, b, c, d) {
-                    return fn(this, a, b, c, d);
-                };
+        // Wrapped instance methods will always be passed the instance
+        // as the first argument, but requiring the argument to be defined
+        // may cause confusion here, so return the same wrapped function regardless.
+        case 0:
+        case 1:
+            return function () {
+                return fn(this);
+            };
+        case 2:
+            return function (a) {
+                return fn(this, a);
+            };
+        case 3:
+            return function (a, b) {
+                return fn(this, a, b);
+            };
+        case 4:
+            return function (a, b, c) {
+                return fn(this, a, b, c);
+            };
+        case 5:
+            return function (a, b, c, d) {
+                return fn(this, a, b, c, d);
+            };
         }
     }
 
@@ -1823,10 +1824,10 @@
             return 'th';
         } else {
             switch (num % 10) {
-                case 1: return 'st';
-                case 2: return 'nd';
-                case 3: return 'rd';
-                default: return 'th';
+            case 1: return 'st';
+            case 2: return 'nd';
+            case 3: return 'rd';
+            default: return 'th';
             }
         }
     }
@@ -3657,18 +3658,18 @@
         if (isString(d)) {
             d = trim(d).toLowerCase();
             switch (true) {
-                case d === 'future': return date.getTime() > getNewDate().getTime();
-                case d === 'past': return date.getTime() < getNewDate().getTime();
-                case d === 'today': return compareDay(date);
-                case d === 'tomorrow': return compareDay(date, 1);
-                case d === 'yesterday': return compareDay(date, -1);
-                case d === 'weekday': return getWeekday(date) > 0 && getWeekday(date) < 6;
-                case d === 'weekend': return getWeekday(date) === 0 || getWeekday(date) === 6;
+            case d === 'future': return date.getTime() > getNewDate().getTime();
+            case d === 'past': return date.getTime() < getNewDate().getTime();
+            case d === 'today': return compareDay(date);
+            case d === 'tomorrow': return compareDay(date, 1);
+            case d === 'yesterday': return compareDay(date, -1);
+            case d === 'weekday': return getWeekday(date) > 0 && getWeekday(date) < 6;
+            case d === 'weekend': return getWeekday(date) === 0 || getWeekday(date) === 6;
 
-                case (isDefined(tmp = English.weekdayMap[d])):
-                    return getWeekday(date) === tmp;
-                case (isDefined(tmp = English.monthMap[d])):
-                    return getMonth(date) === tmp;
+            case (isDefined(tmp = English.weekdayMap[d])):
+                return getWeekday(date) === tmp;
+            case (isDefined(tmp = English.monthMap[d])):
+                return getMonth(date) === tmp;
             }
         }
         return compareDate(date, d, margin);
@@ -4170,8 +4171,8 @@
                 return;
             }
             switch (prefer) {
-                case -1: return d > getNewDate();
-                case 1: return d < getNewDate();
+            case -1: return d > getNewDate();
+            case 1: return d < getNewDate();
             }
         }
 
@@ -4522,9 +4523,9 @@
                 sign = this[ms > 0 ? 'fromNow' : 'ago'];
                 return format.replace(/\{(.*?)\}/g, function (full, match) {
                     switch (match) {
-                        case 'num': return num;
-                        case 'unit': return unit;
-                        case 'sign': return sign;
+                    case 'num': return num;
+                    case 'unit': return unit;
+                    case 'sign': return sign;
                     }
                 });
             },
@@ -6322,7 +6323,7 @@
         'parse': [
             '(?:just)? now',
             '{shift} {unit:5-7}',
-            "{months?} (?:{year}|'{yy})",
+            '{months?} (?:{year}|\'{yy})',
             '{midday} {4?} {day|weekday}',
             '{months},?(?:[-.\\/\\s]{year})?',
             '{edge} of (?:day)? {day|weekday}',
@@ -6341,8 +6342,8 @@
             '{year}[-.\\/\\s]{months}[-.\\/\\s]{date}',
             '{0|months} {date?}{1?} of {shift} {unit:6-7}',
             '{0?} {num}{1?} {weekday} of {shift} {unit:6}',
-            "{date}[-.\\/\\s]{months}[-.\\/\\s](?:{year}|'?{yy})",
-            "{weekday?}\\.?,? {months}\\.?,? {date}{1?},? (?:{year}|'{yy})?"
+            '{date}[-.\\/\\s]{months}[-.\\/\\s](?:{year}|\'?{yy})',
+            '{weekday?}\\.?,? {months}\\.?,? {date}{1?},? (?:{year}|\'{yy})?'
         ],
         'timeFrontParse': [
             '{sign} {num} {unit}',
@@ -6422,7 +6423,7 @@
         'amp': '&',
         'nbsp': ' ',
         'quot': '"',
-        'apos': "'"
+        'apos': '\''
     };
 
     var HTMLToEntityMap;
@@ -6464,18 +6465,18 @@
         }
         ellipsis = isUndefined(ellipsis) ? '...' : ellipsis;
         switch (from) {
-            case 'left':
-                str2 = split ? truncateOnWord(str, length, true) : str.slice(str.length - length);
-                return ellipsis + str2;
-            case 'middle':
-                len1 = ceil(length / 2);
-                len2 = floor(length / 2);
-                str1 = split ? truncateOnWord(str, len1) : str.slice(0, len1);
-                str2 = split ? truncateOnWord(str, len2, true) : str.slice(str.length - len2);
-                return str1 + ellipsis + str2;
-            default:
-                str1 = split ? truncateOnWord(str, length) : str.slice(0, length);
-                return str1 + ellipsis;
+        case 'left':
+            str2 = split ? truncateOnWord(str, length, true) : str.slice(str.length - length);
+            return ellipsis + str2;
+        case 'middle':
+            len1 = ceil(length / 2);
+            len2 = floor(length / 2);
+            str1 = split ? truncateOnWord(str, len1) : str.slice(0, len1);
+            str2 = split ? truncateOnWord(str, len2, true) : str.slice(str.length - len2);
+            return str1 + ellipsis + str2;
+        default:
+            str1 = split ? truncateOnWord(str, length) : str.slice(0, length);
+            return str1 + ellipsis;
         }
     }
 

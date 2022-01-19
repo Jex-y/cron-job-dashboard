@@ -75,7 +75,7 @@ describe('POST /register', () => {
     // });
 
     it(
-        'Registering with a valid credentials should return a valid JWT', async () => {
+        'Registering with valid credentials should return a valid JWT', async () => {
             const res = await server.post('/register')
                 .send('name=testuser&email=test@email.com&pass=password');
             expect(res.status).toEqual(200);
@@ -102,7 +102,7 @@ describe('POST /register', () => {
         'Registering with an email that is already used should return an error', async () => {
             const res = await server.post('/register')
                 .send('name=testuser&email=taken@email.com&pass=password');
-            expect(res.status).toEqual(400);
+            expect(res.status).toEqual(409);
             expect(res.body.token).toBeUndefined();
         });
 
@@ -110,7 +110,7 @@ describe('POST /register', () => {
         'Registering with an invalid email should return an error', async () => {
             const res = await server.post('/register')
                 .send('name=testuser&email=notanemail.com&pass=password');
-            expect(res.status).toEqual(400);
+            expect(res.status).toEqual(422);
             expect(res.body.token).toBeUndefined();
         });
 

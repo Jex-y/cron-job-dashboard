@@ -21,13 +21,6 @@ module.exports = (db) => {
         jobName = decodeURI(jobName);
         let job = await db.getUserJob(userID, jobName);
 
-        const validMethods = {
-            delete: ['delete'],
-            add: ['post'],
-            start: ['post'],
-            stop: ['post'],
-            fail: ['post']
-        };
         const postActions = ['add', 'start', 'stop', 'fail'];
         const method = req.method.toUpperCase();
         if (
@@ -130,6 +123,10 @@ module.exports = (db) => {
 
         } else if (action == 'start') {
             await job;
+            const last = db.getLastRun(userID, jobName);
+            if (last && last.status == 'running') {
+                db.failRun(userID, jobName, last.start);
+            }
             db.startRun(userID, jobName);
             return res.status(200).send({ msg: `${jobName} started` });
         } else if (action == 'stop' || action == 'fail') {
@@ -165,6 +162,10 @@ module.exports = (db) => {
 
         let options = {};
         if (expire) {
+            const expireRe = /^\d+[smhdw]$/;
+            if (!expire.match(expireRe)) {
+                return res.status(400).send({error: 'Expire time is invalid.'});
+            }
             options = { 'expiresIn': expire };
         }
         let token = jwt.sign(

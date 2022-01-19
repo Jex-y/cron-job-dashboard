@@ -585,6 +585,17 @@ describe('GET /gen-token', () => {
             expect(newToken.exp).toBeUndefined();
             
         });
+
+    it(
+        'Calling with an invalid expire time should return an error', async () => {
+            const expire = 'invalid';
+            const res = await server.get('/api/gen-token')
+                .set('authorization', 'Bearer ' + token)
+                .query({expire : expire});
+
+            expect(res.status).toEqual(400);
+            expect(res.body.token).toBeUndefined();
+        });
 });
 
 function sleep(ms) {

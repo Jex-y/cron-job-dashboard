@@ -18,7 +18,7 @@ module.exports.router = (db) => {
         const { email, pass } = req.body;
         if (!(email && pass)) {
             return res.status(400).send({
-                error: 'Data sent does not contain a username and password'
+                error: 'Data sent does not contain an email and password'
             });
         }
         let user = await db.getUserByEmail(email);
@@ -51,14 +51,14 @@ module.exports.router = (db) => {
         }
 
         if (!validateEmail(email)) {
-            return res.status(400).send({
+            return res.status(422).send({
                 error: 'Email is not valid'
             });
         }
 
         let user = await db.getUserByEmail(email);
         if (user) {
-            return res.status(400).send({
+            return res.status(409).send({
                 error: 'There is already a user registered with that email'
             });
         }
@@ -115,7 +115,11 @@ module.exports.middleware = (db, redirect = true) => {
             // console.log(user);
             if (!user || !uuid.validate(userID)) {
                 logging.info('Authorization invalid: invalid user id');
-                return res.status(403).send({ error: 'Invalid user id' });
+                if (redirect) {
+                    return res.redirect(302, '/login');
+                } else {
+                    return res.status(403).send({ error: 'Invalid user id' });
+                }
             }
         }
 

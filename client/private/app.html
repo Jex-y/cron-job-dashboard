@@ -18,36 +18,33 @@
 
 <body>
   <div class="wrapper">
-<!-- TODO: Make collapse on mobile -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-white sidebar shadow-lg">
+    <!-- TODO: Make this collapse on mobile -->
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white shadow-lg" id="sidebar">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <span class="fs-4">Cron Job Dashboard</span>
       </a>
       <hr>
-      <ul class="nav navbar-nav flex-column mb-auto">
-        <li class="nav-item mb-2">
-          <button type="button" class="btn btn-primary text-nowrap text-start" data-bs-toggle="modal"
-            data-bs-target="#api-keys-modal">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item mb-2 rounded bg-primary">
+          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#api-keys-modal">
             API Keys
-          </button>
+          </a>
         </li>
-        <li class="nav-item mb-2">
-          <button type="button" class="btn btn-primary text-nowrap text-start" data-bs-toggle="modal"
-            data-bs-target="#add-job-modal">
+        <li class="nav-item mb-2 rounded bg-primary">
+          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#add-job-modal">
             Add Job
-          </button>
+          </a>
         </li>
-        <li class="nav-item mb-2">
-          <a class="btn btn-secondary text-nowrap text-start"
-            href="https://documenter.getpostman.com/view/8229563/UVXnHuZK">
+        <li class="nav-item mb-2 rounded bg-secondary">
+          <a class="nav-link link-light" href="https://documenter.getpostman.com/view/8229563/UVXnHuZK">
             API Docs
           </a>
         </li>
       </ul>
       <hr>
-      <button type="button" class="btn btn-secondary text-nowrap text-start" onclick="logout()">
-        Log out
-      </button>
+      <a class="nav-link link-light rounded bg-secondary" href="javascript:logout()">
+        Log Out
+      </a>
     </div>
 
     <!-- Network error notification -->
@@ -180,15 +177,20 @@
       </div>
     </div>
 
-    <div class="container-fluid jobs-container">
-      <div class="row row-cols-auto" id="jobs-table"></div>
+    <div class="container-fluid">
+      <div class="content">
+        <div class="container-fluid jobs-container">
+          <div class="row row-cols-auto" id="jobs-table"></div>
+        </div>
+    
+        <div class="container-fluid text-center text-white" style="height: 100%; display: none;" id="no-jobs-text">
+          <h2 style="position: relative; top: 35%;">
+            You have no jobs, add one to see it here!
+          </h2>
+        </div>
+      </div>
     </div>
 
-    <div class="container-fluid text-center text-white" style="height: 100%; display: none;" id="no-jobs-text">
-      <h2 style="position: relative; top: 35%;">
-        You have no jobs, add one to see it here!
-      </h2>
-    </div>
   </div>
   <template id="job-card">
     <div class="col m-3 border rounded job">

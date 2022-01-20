@@ -5,6 +5,10 @@
     margin: 0 auto;
 }
 
+.header {
+    min-width: calc(100%-196px);
+    min-height: 64px;
+}
 
 .wrapper {
     display: flex;
@@ -18,21 +22,17 @@
 .jobs-container {
     position: relative;
     z-index: 0;
-    min-height: calc(100% - 280px);
+    min-width: calc(100% - 196px);
 }
 
-.sidebar {
-    width: 280px;
+#sidebar {
+    width: 196px;
     min-height: 100vh;
     background-color: #353535;
 }
 
 .navbar-nav {
     margin-left: 0px;
-}
-
-.nav-item .btn {
-    min-width: 100%;
 }
 
 #history {

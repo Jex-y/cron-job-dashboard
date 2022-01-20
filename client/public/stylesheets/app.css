@@ -5,13 +5,34 @@
     margin: 0 auto;
 }
 
-.navbar {
-    background-color: #353535;
-}
 
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
 
 .job .title {
     border-bottom: solid 1px #535353;
+}
+
+.jobs-container {
+    position: relative;
+    z-index: 0;
+    min-height: calc(100% - 280px);
+}
+
+.sidebar {
+    width: 280px;
+    min-height: 100vh;
+    background-color: #353535;
+}
+
+.navbar-nav {
+    margin-left: 0px;
+}
+
+.nav-item .btn {
+    min-width: 100%;
 }
 
 #history {

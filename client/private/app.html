@@ -18,8 +18,7 @@
 
 <body>
   <div class="wrapper">
-    <!-- TODO: Make this collapse on mobile -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-white shadow-lg" id="sidebar">
+    <div class="flex-column flex-shrink-0 p-3 text-white shadow-lg d-none d-md-block" id="sidebar">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <span class="fs-4">Cron Job Dashboard</span>
       </a>
@@ -158,7 +157,7 @@
       </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid px-0">
       <div class="content">
         <!-- Network error notification -->
         <div class="position-relative" aria-live="polite" aria-atomic="true">
@@ -188,55 +187,81 @@
           </h2>
         </div>
       </div>
-    </div>
+      <div class="container-fluid fixed-bottom shadow-lg d-block d-md-none" id="bottombar">
+        <div class="row mx-1 my-2 flex-nowrap">
+          <div class="col text-center">
+            <button class="btn btn-outline-light text-white navbtn" data-bs-toggle="modal"
+              data-bs-target="#api-keys-modal">
+              API Keys
+            </button>
+          </div>
+          <div class="col text-center">
+            <button class="btn btn-outline-light text-white navbtn" data-bs-toggle="modal"
+              data-bs-target="#add-job-modal">
+              Add Job
+            </button>
+          </div>
+          <div class="col text-center">
+            <a class="btn btn-outline-light text-white navbtn" role="button"
+              href="https://documenter.getpostman.com/view/8229563/UVXnHuZK">
+              API Docs
+            </a>
+          </div>
+          <div class="col text-center">
+            <button class="btn btn-outline-light text-white navbtn" onclick="logout()">
+              Log Out
+            </button>
+          </div>
+        </div>
+      </div>
 
-  </div>
-  <template id="job-card">
-    <div class="col m-3 border rounded job">
-      <div class="row title mb-3">
-        <div class="col-8 h4 text-light mb-3" id="jobName">Job Name</div>
-        <div class="col-2" id="badge"></div>
-        <div class="col-1 justify-content-end pl-5" id="delete-button" data-bs-toggle="modal"
-          data-bs-target="#confirm-delete-modal"">
-            <svg xmlns=" http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-trash"
-          viewBox="0 0 16 16">
-          <path
-            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-          <path fill-rule="evenodd"
-            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-          </svg>
-        </div>
-      </div>
-      <div class="row details justify-content-center">
-        <div class="row mb-2">
-          <div class="col text-light">
-            <h6>Last run duration</h6>
-            <h5 id="last-duration">3:12</h5>
-          </div>
-          <div class="col text-light">
-            <h6>Average run duration</h6>
-            <h5 id="avg-duration">2:14</h5>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="col text-light">
-            <h6>Last updated</h6>
-            <h5 id="last-run">3 days ago</h5>
-          </div>
-          <div class="col text-light">
-            <h6>Frequency</h6>
-            <h5 id="frequency">Every 3 days</h5>
-          </div>
-        </div>
-        <div class="row flex-nowrap mb-1 justify-content-center" id="history"></div>
-      </div>
     </div>
-  </template>
-  <script src="scripts/sugar.js"></script>
-  <script src="scripts/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
+    <template id="job-card">
+      <div class="col m-3 border rounded job">
+        <div class="row title mb-3">
+          <div class="col-8 h4 text-light mb-3" id="jobName">Job Name</div>
+          <div class="col-2" id="badge"></div>
+          <div class="col-1 justify-content-end pl-5" id="delete-button" data-bs-toggle="modal"
+            data-bs-target="#confirm-delete-modal"">
+            <svg xmlns=" http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-trash"
+            viewBox="0 0 16 16">
+            <path
+              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+            <path fill-rule="evenodd"
+              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+            </svg>
+          </div>
+        </div>
+        <div class="row details justify-content-center">
+          <div class="row mb-2">
+            <div class="col text-light">
+              <h6>Last run duration</h6>
+              <h5 id="last-duration">3:12</h5>
+            </div>
+            <div class="col text-light">
+              <h6>Average run duration</h6>
+              <h5 id="avg-duration">2:14</h5>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col text-light">
+              <h6>Last updated</h6>
+              <h5 id="last-run">3 days ago</h5>
+            </div>
+            <div class="col text-light">
+              <h6>Frequency</h6>
+              <h5 id="frequency">Every 3 days</h5>
+            </div>
+          </div>
+          <div class="row flex-nowrap mb-1 justify-content-center" id="history"></div>
+        </div>
+      </div>
+    </template>
+    <script src="scripts/sugar.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"></script>
 </body>
 
 </html>

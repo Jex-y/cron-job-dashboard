@@ -5,6 +5,8 @@
     margin: 0 auto;
 }
 
+/* Media query for max width on mobile to be ~90vh */
+
 .header {
     min-width: calc(100%-196px);
     min-height: 64px;
@@ -29,6 +31,16 @@
     width: 196px;
     min-height: 100vh;
     background-color: #353535;
+}
+
+#bottombar{
+    background-color: #444444;
+    border-radius: 16px 16px 0px 0px;
+}
+
+.navbtn {
+    font-size: xx-small;
+    height: 100%;
 }
 
 .navbar-nav {

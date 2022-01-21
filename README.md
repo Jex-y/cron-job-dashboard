@@ -25,7 +25,7 @@ Note that if you wish to view the project on another device to the one it is bei
 
 ## Example
 If you were to write a cron job running `program`, to monitor it you would write:
-```
+```bash
 BASE_URL = "http://localhost:8080/api/job/<Job Name>"
 AUTH = "Authorization: Bearer <token>"
 curl -X POST ${BASE_URL}?action=start --header ${AUTH} && \

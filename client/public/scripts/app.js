@@ -15,7 +15,7 @@
         });
 
     updateAllJobs();
-    // setInterval(updateAllJobs, 5000);
+    setInterval(updateAllJobs, 1000);
 })();
 
 let prev_job_details = {};

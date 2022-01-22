@@ -18,7 +18,7 @@
     setInterval(updateAllJobs, 1000);
 })();
 
-let prev_job_details = {};
+// let prev_job_details = {};
 
 async function getJobs() {
     return (await apiCall('/api/jobs', 'GET', getJobs)).jobs;
@@ -78,21 +78,14 @@ async function updateAllJobs() {
             deleteButton.setAttribute('data-bs-jobname', jobs[i]);
             details = await details;
 
-            if (details.lastRunDate) {
-                const lastRunDate = Sugar.Date(details.lastRunDate);
-                lastRun.textContent = lastRunDate.relative();
-            } else {
-                lastRun.textContent = 'N/A';
-            }
-            
-            const last_details = prev_job_details[jobs[i]];
-            if (last_details && (
-                (last_details.lastRunDate == details.lastRunDate) &&
-                (last_details.lastRunStatus == details.lastRunStatus)
-            )) {
-                return;
-            }
-            prev_job_details[jobs[i]] = details;
+            // const last_details = prev_job_details[jobs[i]];
+            // if (last_details && (
+            //     (last_details.lastRunDate == details.lastRunDate) &&
+            //     (last_details.lastRunStatus == details.lastRunStatus)
+            // )) {
+            //     return;
+            // }
+            // prev_job_details[jobs[i]] = details;
 
             switch (details.lastRunStatus) {
             case undefined:
@@ -137,7 +130,12 @@ async function updateAllJobs() {
                 meanDuration.textContent = '--:--';
             }
 
-            
+            if (details.lastRunDate) {
+                const lastRunDate = Sugar.Date(details.lastRunDate);
+                lastRun.textContent = lastRunDate.relative();
+            } else {
+                lastRun.textContent = 'N/A';
+            }
 
             if (details.frequency) {
                 frequency.textContent = periodToString(details.frequency);

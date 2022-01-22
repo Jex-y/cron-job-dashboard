@@ -15,7 +15,10 @@
         });
 
     updateAllJobs();
+    setInterval(updateAllJobs, 5000);
 })();
+
+let prev_job_details = {};
 
 async function getJobs() {
     return (await apiCall('/api/jobs', 'GET', getJobs)).jobs;
@@ -41,7 +44,7 @@ async function updateAllJobs() {
 
     (async () => {
         for (let i = 0; i < children.length; i++) {
-            const jobName = children[i].querySelector('#jobName');
+            const jobName = children[i].querySelector('#jobName').innerHTML;
             if (!(jobs.includes(jobName))) {
                 children[i].remove();
             }
@@ -74,6 +77,15 @@ async function updateAllJobs() {
             jobName.textContent = jobs[i];
             deleteButton.setAttribute('data-bs-jobname', jobs[i]);
             details = await details;
+            const last_details = prev_job_details[jobs[i]]
+            if (last_details && (
+                (last_details.lastRunDate == details.lastRunDate) &&
+                (last_details.lastRunStatus == details.lastRunStatus)
+            )) {
+                return;
+            }
+            prev_job_details[jobs[i]] = details;
+
             switch (details.lastRunStatus) {
             case undefined:
                 badge.innerHTML = newBadge;

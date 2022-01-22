@@ -15,7 +15,7 @@
         });
 
     updateAllJobs();
-    setInterval(updateAllJobs, 5000);
+    // setInterval(updateAllJobs, 5000);
 })();
 
 let prev_job_details = {};
@@ -35,7 +35,7 @@ async function updateAllJobs() {
     let jobs = getJobs();
     const sucsessBadge = '<span class="badge bg-success">Passing</span>';
     const failBadge = '<span class="badge bg-danger">Failed</span>';
-    const runningBadge = '<span class="visually-hidden">Running...</span>';
+    const runningBadge = '<div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div>';
     const newBadge = '<span class="badge bg-info">New</span>';
     const template = document.querySelector('#job-card');
     const table = document.querySelector('#jobs-table');
@@ -77,7 +77,7 @@ async function updateAllJobs() {
             jobName.textContent = jobs[i];
             deleteButton.setAttribute('data-bs-jobname', jobs[i]);
             details = await details;
-            const last_details = prev_job_details[jobs[i]]
+            const last_details = prev_job_details[jobs[i]];
             if (last_details && (
                 (last_details.lastRunDate == details.lastRunDate) &&
                 (last_details.lastRunStatus == details.lastRunStatus)

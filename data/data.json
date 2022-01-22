@@ -1,1 +1,180 @@
-{"users":[{"name":"test","email":"test@email.com","pass":"$2b$10$m6Xts6GYlFtvnc542sc.bewvq/LNna9ZHDg2HSCy.JvVzD46E107G","id":"b840189f-d5a3-4439-9609-6590a3c3fe23"},{"name":"Abigail Parry","email":"example@durham.ac.uk","pass":"$2b$10$5jA7i/kNdrOVEJ8PgUNlMOh2qYXAl1Kbuy2QnSgyYvAPJd3RBuP9q","id":"71dc95b5-7233-4092-8f44-79ef6781db80"},{"name":"Sarah King","email":"sarah.cockpit@gmail.com","pass":"$2b$10$0Db3J5aN1bbZQsmBi3ekMeCMWOEA/xlyKNVbVK8hdKPRqGGliI1wq","id":"eed6e0dc-6744-4238-9e8c-f372087a66b1"},{"name":"Sarah King","email":"sarah.cockpit1@gmail.com","pass":"$2b$10$BzKEOq/rD8W/02IHlYUvBext95UV4Eq/LCiTGDAeoCzwG6vtdBioi","id":"857dfa8d-e40c-4bbe-8eb2-f8855be5ec45"},{"name":"Abigail Parry mark II","email":"absterbear@gmail.com","pass":"$2b$10$ayOI8JigWzl53QZFKT6pcO0oc48WLgKCnXJ8JzPaelFa1s2EFekVq","id":"0d9b9f8a-9172-42e8-885e-0ce6c3f3bea8"},{"name":"New User","email":"test4@email.com","pass":"$2b$10$WhGZ6Np.mXcdGFteJkyyieQrnweMb6uRluW/a.MNe51IVCe8fRPBa","id":"d1ed0fb5-cb6b-4913-862e-e143cb2a90d4"}],"jobs":[{"name":"testjob","user":"b840189f-d5a3-4439-9609-6590a3c3fe23"},{"user":"0d9b9f8a-9172-42e8-885e-0ce6c3f3bea8","name":"Fix drone"},{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"Job Name"}],"runs":[{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"testjob","start":"2021-12-21T16:18:12.052Z","finish":"2021-12-21T16:19:12.052Z","status":"finished"},{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"testjob","start":"2021-12-22T16:18:12.052Z","finish":"2021-12-22T16:19:12.052Z","status":"finished"},{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"testjob","start":"2021-12-23T16:18:12.052Z","finish":"2021-12-23T16:19:12.052Z","status":"failed"},{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"Job Name","start":"2022-01-19T16:44:48.285Z","finish":"2022-01-19T16:45:22.461Z","status":"finished"},{"user":"b840189f-d5a3-4439-9609-6590a3c3fe23","name":"Job Name","start":"2022-01-19T16:46:09.246Z","finish":"2022-01-19T16:46:14.017Z","status":"failed"}]}
+{
+    "users": [
+        {
+            "name": "test",
+            "email": "test@email.com",
+            "pass": "$2b$10$m6Xts6GYlFtvnc542sc.bewvq/LNna9ZHDg2HSCy.JvVzD46E107G",
+            "id": "b840189f-d5a3-4439-9609-6590a3c3fe23"
+        }
+    ],
+    "jobs": [
+        {
+            "name": "testjob",
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "Job Name"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job"
+        }
+    ],
+    "runs": [
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "testjob",
+            "start": "2021-12-21T16:18:12.052Z",
+            "finish": "2021-12-21T16:19:12.052Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "testjob",
+            "start": "2021-12-22T16:18:12.052Z",
+            "finish": "2021-12-22T16:19:12.052Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "testjob",
+            "start": "2021-12-23T16:18:12.052Z",
+            "finish": "2021-12-23T16:19:12.052Z",
+            "status": "failed"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "Job Name",
+            "start": "2022-01-19T16:44:48.285Z",
+            "finish": "2022-01-19T16:45:22.461Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "Job Name",
+            "start": "2022-01-19T16:46:09.246Z",
+            "finish": "2022-01-19T16:46:14.017Z",
+            "status": "failed"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T20:43:19.553Z",
+            "finish": null,
+            "status": "running"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T20:44:10.704Z",
+            "finish": "2022-01-22T20:44:11.730Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T20:51:45.481Z",
+            "finish": "2022-01-22T20:51:46.511Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T20:55:01.504Z",
+            "finish": "2022-01-22T20:55:02.538Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:00:01.597Z",
+            "finish": "2022-01-22T21:00:02.631Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:05:01.684Z",
+            "finish": "2022-01-22T21:05:02.710Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:14:21.930Z",
+            "finish": "2022-01-22T21:14:27.926Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:15:50.793Z",
+            "finish": "2022-01-22T21:17:32.536Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:20:02.024Z",
+            "finish": "2022-01-22T21:20:03.132Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:25:01.452Z",
+            "finish": "2022-01-22T21:25:02.605Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:45:01.370Z",
+            "finish": "2022-01-22T21:45:02.476Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:50:01.731Z",
+            "finish": "2022-01-22T21:50:02.885Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T21:55:01.426Z",
+            "finish": "2022-01-22T21:55:02.545Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T22:00:02.107Z",
+            "finish": "2022-01-22T22:00:03.500Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T22:05:02.035Z",
+            "finish": "2022-01-22T22:05:03.323Z",
+            "status": "finished"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T22:15:01.743Z",
+            "finish": null,
+            "status": "running"
+        },
+        {
+            "user": "b840189f-d5a3-4439-9609-6590a3c3fe23",
+            "name": "5 Min Job",
+            "start": "2022-01-22T22:20:01.904Z",
+            "finish": "2022-01-22T22:20:03.016Z",
+            "status": "finished"
+        }
+    ]
+}

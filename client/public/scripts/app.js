@@ -77,6 +77,14 @@ async function updateAllJobs() {
             jobName.textContent = jobs[i];
             deleteButton.setAttribute('data-bs-jobname', jobs[i]);
             details = await details;
+
+            if (details.lastRunDate) {
+                const lastRunDate = Sugar.Date(details.lastRunDate);
+                lastRun.textContent = lastRunDate.relative();
+            } else {
+                lastRun.textContent = 'N/A';
+            }
+            
             const last_details = prev_job_details[jobs[i]];
             if (last_details && (
                 (last_details.lastRunDate == details.lastRunDate) &&
@@ -129,12 +137,7 @@ async function updateAllJobs() {
                 meanDuration.textContent = '--:--';
             }
 
-            if (details.lastRunDate) {
-                const lastRunDate = Sugar.Date(details.lastRunDate);
-                lastRun.textContent = lastRunDate.relative();
-            } else {
-                lastRun.textContent = 'N/A';
-            }
+            
 
             if (details.frequency) {
                 frequency.textContent = periodToString(details.frequency);

@@ -44,7 +44,7 @@ async function updateAllJobs() {
 
     (async () => {
         for (let i = 0; i < children.length; i++) {
-            const jobName = children[i].querySelector('#jobName').innerHTML;
+            const jobName = children[i].querySelector('.jobName').innerHTML;
             if (!(jobs.includes(jobName))) {
                 children[i].remove();
             }
@@ -65,14 +65,14 @@ async function updateAllJobs() {
 
             let card = template.content.cloneNode(true);
 
-            const jobName = card.querySelector('#jobName');
-            const badge = card.querySelector('#badge');
-            const lastDuration = card.querySelector('#last-duration');
-            const meanDuration = card.querySelector('#avg-duration');
-            const lastRun = card.querySelector('#last-run');
-            const frequency = card.querySelector('#frequency');
-            const history = card.querySelector('#history');
-            const deleteButton = card.querySelector('#delete-button');
+            const jobName = card.querySelector('.jobName');
+            const badge = card.querySelector('.badge');
+            const lastDuration = card.querySelector('.last-duration');
+            const meanDuration = card.querySelector('.avg-duration');
+            const lastRun = card.querySelector('.last-run');
+            const frequency = card.querySelector('.frequency');
+            const history = card.querySelector('.history');
+            const deleteButton = card.querySelector('.delete-button');
 
             jobName.textContent = jobs[i];
             deleteButton.setAttribute('data-bs-jobname', jobs[i]);
@@ -221,7 +221,7 @@ async function addJob() {
 
     if (!(res.ok)) {
         res = JSON.parse(await res.text());
-        document.getElementById('add-job-error').innerHTML = res.error;
+        document.querySelector('.add-job-error').innerHTML = res.error;
         form.name.setCustomValidity('_');
         form.classList.add('was-validated');
     } else {
@@ -280,7 +280,6 @@ async function apiCall(url, method, cannotConnectCallback) {
     } else if (res.status == 403) {
         window.location.href = '/login';
     } else {
-        console.log(res);
         res = JSON.parse(await res.text());
         return res;
     }

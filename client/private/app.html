@@ -25,12 +25,12 @@
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item mb-2 rounded bg-primary">
-          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#api-keys-modal">
+          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#api-keys-modal" href="#">
             API Keys
           </a>
         </li>
         <li class="nav-item mb-2 rounded bg-primary">
-          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#add-job-modal">
+          <a class="nav-link link-light" data-bs-toggle="modal" data-bs-target="#add-job-modal" href="#">
             Add Job
           </a>
         </li>
@@ -117,11 +117,12 @@
           </div>
           <div class="modal-body">
             <div class="container col">
-              <form id="add-job-form" action='#' novalidate>
+              <form id="add-job-form" action='#' onsubmit="addJob()" novalidate>
                 <div class="row">
                   <input type="text" id="name" placeholder="Job Name" autofocus required />
                   <div class="invalid-feedback" id='add-job-error'></div>
                 </div>
+                <input type="submit" class="visually-hidden">
               </form>
             </div>
           </div>
@@ -180,6 +181,7 @@
         <div class="container-fluid jobs-container mb-5">
           <div class="row row-cols-auto" id="jobs-table"></div>
         </div>
+      </div>
 
         <div class="container-fluid text-center text-white" style="height: 100%; display: none;" id="no-jobs-text">
           <h2 style="position: relative; top: 35%;">
@@ -219,10 +221,10 @@
     <template id="job-card">
       <div class="col m-3 border rounded job">
         <div class="row title mb-3">
-          <div class="col-8 h4 text-light mb-3" id="jobName">Job Name</div>
-          <div class="col-2" id="badge"></div>
-          <div class="col-1 justify-content-end pl-5" id="delete-button" data-bs-toggle="modal"
-            data-bs-target="#confirm-delete-modal"">
+          <div class="col-8 h4 text-light mb-3 jobName">Job Name</div>
+          <div class="col-2 badge"></div>
+          <div class="col-1 justify-content-end pl-5">
+            <a class="delete-button" href="#" data-bs-toggle="modal" data-bs-target="#confirm-delete-modal">
             <svg xmlns=" http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-trash"
             viewBox="0 0 16 16">
             <path
@@ -230,30 +232,31 @@
             <path fill-rule="evenodd"
               d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
             </svg>
+          </a>
           </div>
         </div>
         <div class="row details justify-content-center">
           <div class="row mb-2">
             <div class="col text-light">
               <h6>Last run duration</h6>
-              <h5 id="last-duration">3:12</h5>
+              <h5 class="last-duration">3:12</h5>
             </div>
             <div class="col text-light">
               <h6>Average run duration</h6>
-              <h5 id="avg-duration">2:14</h5>
+              <h5 class="avg-duration">2:14</h5>
             </div>
           </div>
           <div class="row mb-2">
             <div class="col text-light">
               <h6>Last updated</h6>
-              <h5 id="last-run">3 days ago</h5>
+              <h5 class="last-run">3 days ago</h5>
             </div>
             <div class="col text-light">
               <h6>Frequency</h6>
-              <h5 id="frequency">Every 3 days</h5>
+              <h5 class="frequency">Every 3 days</h5>
             </div>
           </div>
-          <div class="row flex-nowrap mb-1 justify-content-center" id="history"></div>
+          <div class="row flex-nowrap mb-1 justify-content-center history"></div>
         </div>
       </div>
     </template>

@@ -6,7 +6,7 @@ From this, the dashboard will then give you information about how often they run
 The documentation for the project can be found [here](https://documenter.getpostman.com/view/8229563/UVXnHuZK).
 An instance of the project is also hosted [here](http://app.edjex.net)
 ## Credentails
-To log in to evaluate the project please use email: `test@email.com`, password: `password`.
+To log into [app.edjex.net](http://app.edjex.net) in order to evaluate the project please use email: `test@email.com`, password: `password`.
 This account has some example jobs, inlcuding one that is being consistently run every 5 mins.
 
 ## Installation

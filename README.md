@@ -4,9 +4,9 @@ This project has an API that is intended to be called by you reccuring jobs when
 From this, the dashboard will then give you information about how often they run, if they have failed recently and how long they take to run.
 
 The documentation for the project can be found [here](https://documenter.getpostman.com/view/8229563/UVXnHuZK).
-An instance of the project is also hosted [here](http://app.edjex.net)
+An instance of the project is also hosted [here](35.176.161.114)
 ## Credentails
-To log into [app.edjex.net](http://app.edjex.net) in order to evaluate the project please use email: `test@email.com`, password: `password`.
+To log into [35.176.161.114](http://35.176.161.114) in order to evaluate the project please use email: `test@email.com`, password: `password`.
 This account has some example jobs, inlcuding one that is being consistently run every 5 mins.
 
 ## Installation
@@ -25,12 +25,12 @@ npm start
 When starting the project, it should display the host and port it is listening on.
 
 ### Hosting
-Note that if you wish to view the project on another device to the one it is being hosted on, the you will need to set `SERVER_HOST=0.0.0.0` (or whatever the IP address of you machine is). By default it is only accessable from the local machine. 
+Note that if you wish to view the project on another device to the one it is being hosted on, the you will need to set `SERVER_HOST=0.0.0.0` in the `.env` file (or whatever the IP address of you machine is). By default it is only accessable from the local machine. 
 
 ## Example
 If you were to write a cron job running `program`, to monitor it you would write:
 ```bash
-BASE_URL="http://app.edjex.net/api/job/<Job Name>"
+BASE_URL="http://35.176.161.114/api/job/<Job Name>"
 AUTH="Authorization: Bearer <token>"
 curl -X POST ${BASE_URL}?action=start --header "${AUTH}" && \
 (program && curl -X POST ${BASE_URL}?action=stop --header "${AUTH}") || \
